@@ -1,0 +1,13 @@
+{
+  "type": "object",
+  "required": ["trade_id", "symbol", "price", "quantity", "buyer_bot_id", "seller_bot_id", "timestamp"],
+  "properties": {
+    "trade_id": { "type": "string" },
+    "symbol": { "type": "string" },
+    "price": { "type": "number" },
+    "quantity": { "type": "number" },
+    "buyer_bot_id": { "type": "string" },
+    "seller_bot_id": { "type": "string" },
+    "timestamp": { "type": "string" }
+  }
+}

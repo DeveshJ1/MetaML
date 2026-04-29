@@ -1,0 +1,14 @@
+{
+  "type": "object",
+  "required": ["order_id", "bot_id", "symbol", "side", "quantity", "order_type", "timestamp"],
+  "properties": {
+    "order_id": { "type": "string" },
+    "bot_id": { "type": "string" },
+    "symbol": { "type": "string" },
+    "side": { "type": "string", "enum": ["BUY", "SELL"] },
+    "quantity": { "type": "number" },
+    "price": { "type": ["number", "null"] },
+    "order_type": { "type": "string", "enum": ["MARKET", "LIMIT"] },
+    "timestamp": { "type": "string" }
+  }
+}

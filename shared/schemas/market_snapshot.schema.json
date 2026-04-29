@@ -1,0 +1,13 @@
+{
+  "type": "object",
+  "required": ["symbol", "mid_price", "best_bid", "best_ask", "spread", "regime", "timestamp"],
+  "properties": {
+    "symbol": { "type": "string" },
+    "mid_price": { "type": "number" },
+    "best_bid": { "type": "number" },
+    "best_ask": { "type": "number" },
+    "spread": { "type": "number" },
+    "regime": { "type": "string" },
+    "timestamp": { "type": "string" }
+  }
+}

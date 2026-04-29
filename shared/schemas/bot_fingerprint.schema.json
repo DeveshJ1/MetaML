@@ -1,0 +1,16 @@
+{
+  "type": "object",
+  "required": ["bot_id", "strategy_type", "window_start", "window_end", "pnl", "drawdown", "fill_rate", "latency_ms", "market_regime"],
+  "properties": {
+    "bot_id": { "type": "string" },
+    "strategy_type": { "type": "string" },
+    "window_start": { "type": "string" },
+    "window_end": { "type": "string" },
+    "pnl": { "type": "number" },
+    "drawdown": { "type": "number" },
+    "fill_rate": { "type": "number" },
+    "latency_ms": { "type": "number" },
+    "market_regime": { "type": "string" },
+    "recommended_for_future": { "type": "boolean" }
+  }
+}
