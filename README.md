@@ -100,3 +100,45 @@ Exepected Results:
  Trade monitor displays trades
  Trade logger writes data/logs/trades.csv
  PnL tracker updates cash, position, and equity
+
+## Phase 3: Multiple Strategy Bots
+
+Phase 3 adds:
+
+- Baseline random bot
+- Momentum strategy bot
+- Mean reversion strategy bot
+- Shared bot utility functions
+- All-bot PnL tracker
+
+### Run Phase 3
+
+Start RabbitMQ:
+
+```bash
+docker compose up -d
+Then open 8 terminals and run each in a separate terminals:
+cd metaml
+source .venv/bin/activate
+
+PYTHONPATH=. python services/market-engine/market_engine.py
+PYTHONPATH=. python services/replay-service/replay_service.py
+PYTHONPATH=. python services/bots/baseline/baseline_bot.py
+PYTHONPATH=. python services/bots/momentum/momentum_bot.py
+PYTHONPATH=. python services/bots/mean-reversion/mean_reversion_bot.py
+PYTHONPATH=. python scripts/monitor_trades.py
+PYTHONPATH=. python scripts/track_all_pnl.py
+PYTHONPATH=. python scripts/log_trades.py
+
+Expectations:
+ Baseline bot runs
+ Momentum bot runs
+ Mean reversion bot runs
+ All bots receive market snapshots
+ Momentum bot trades on price direction
+ Mean reversion bot trades on price deviation
+ Market engine executes trades from all bots 
+ PnL tracker shows all active bots
+ Trade logger can log trades from all bots
+
+
