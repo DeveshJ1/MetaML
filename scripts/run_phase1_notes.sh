@@ -1,0 +1,15 @@
+#!/bin/bash
+
+echo "Run these commands in separate terminals:"
+echo ""
+echo "Terminal 1:"
+echo "python services/market-engine/market_engine.py"
+echo ""
+echo "Terminal 2:"
+echo "python services/replay-service/replay_service.py"
+echo ""
+echo "Terminal 3:"
+echo "python services/bots/baseline/baseline_bot.py"
+echo ""
+echo "Terminal 4:"
+echo "python scripts/monitor_trades.py"
