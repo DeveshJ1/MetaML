@@ -12,6 +12,16 @@ def utc_now():
 
 def make_order(snapshot):
     side = random.choice(["BUY", "SELL"])
+    order_type = random.choice(["MARKET", "LIMIT"])
+
+    price = None
+
+    if order_type == "LIMIT":
+        if side == "BUY":
+            # Sometimes aggressive, sometimes passive.
+            price = round(snapshot["best_ask"] if random.random() < 0.5 else snapshot["best_bid"], 2)
+        else:
+            price = round(snapshot["best_bid"] if random.random() < 0.5 else snapshot["best_ask"], 2)
 
     return {
         "order_id": str(uuid.uuid4()),
@@ -19,8 +29,8 @@ def make_order(snapshot):
         "symbol": SYMBOL,
         "side": side,
         "quantity": random.choice([1, 2, 5, 10]),
-        "price": None,
-        "order_type": "MARKET",
+        "price": price,
+        "order_type": order_type,
         "timestamp": utc_now()
     }
 
@@ -29,33 +39,27 @@ def main():
 
     queue = f"{BOT_ID}.market.queue"
     channel.queue_declare(queue=queue, durable=True)
-
-    channel.queue_bind(
-        exchange="metaml.events",
-        queue=queue,
-        routing_key="market.snapshot"
-    )
+    channel.queue_bind(exchange="metaml.events", queue=queue, routing_key="market.snapshot")
 
     print(f"[{BOT_ID}] Waiting for market snapshots...")
 
     def callback(ch, method, properties, body):
         snapshot = decode_json(body)
 
-        # Only trade sometimes so output is readable.
-        should_trade = random.random() < 0.35
-
         print(
-            f"[{BOT_ID}] Snapshot received: "
-            f"mid={snapshot['mid_price']} regime={snapshot['regime']}"
+            f"[{BOT_ID}] Snapshot "
+            f"mid={snapshot['mid_price']} "
+            f"bid={snapshot['best_bid']} ask={snapshot['best_ask']} "
+            f"regime={snapshot['regime']}"
         )
 
-        if should_trade:
+        if random.random() < 0.40:
             order = make_order(snapshot)
             publish_json(channel, "orders.new", order)
 
             print(
-                f"[{BOT_ID}] Sent order: "
-                f"{order['side']} qty={order['quantity']} symbol={order['symbol']}"
+                f"[{BOT_ID}] Sent {order['order_type']} order: "
+                f"{order['side']} qty={order['quantity']} price={order['price']}"
             )
 
     channel.basic_consume(queue=queue, on_message_callback=callback, auto_ack=True)
