@@ -1,0 +1,14 @@
+timestamp,mode,previous_active_bot,recommended_bot,recommended_strategy,confidence_score,decision,reason
+2026-04-30T19:14:05.390673+00:00,manual,,mean-reversion-bot,mean_reversion,1.0,SWITCH,Human approved switch
+2026-04-30T19:14:20.422776+00:00,manual,mean-reversion-bot,mean-reversion-bot,mean_reversion,1.0,KEEP,Recommended bot already active
+2026-04-30T19:14:35.456983+00:00,manual,mean-reversion-bot,mean-reversion-bot,mean_reversion,1.0,KEEP,Recommended bot already active
+2026-04-30T19:14:50.488035+00:00,manual,mean-reversion-bot,mean-reversion-bot,mean_reversion,1.0,KEEP,Recommended bot already active
+2026-04-30T19:15:05.521568+00:00,manual,mean-reversion-bot,mean-reversion-bot,mean_reversion,1.0,KEEP,Recommended bot already active
+2026-04-30T19:15:20.559912+00:00,manual,mean-reversion-bot,mean-reversion-bot,mean_reversion,1.0,KEEP,Recommended bot already active
+2026-04-30T19:15:35.594166+00:00,manual,mean-reversion-bot,mean-reversion-bot,mean_reversion,1.0,KEEP,Recommended bot already active
+2026-04-30T19:15:50.624164+00:00,manual,mean-reversion-bot,mean-reversion-bot,mean_reversion,1.0,KEEP,Recommended bot already active
+2026-04-30T19:16:02.347525+00:00,manual,mean-reversion-bot,mean-reversion-bot,mean_reversion,1.0,KEEP,Recommended bot already active
+2026-04-30T19:16:15.660636+00:00,auto,mean-reversion-bot,mean-reversion-bot,mean_reversion,1.0,KEEP,Recommended bot already active
+2026-04-30T19:16:30.698075+00:00,auto,mean-reversion-bot,mean-reversion-bot,mean_reversion,1.0,KEEP,Recommended bot already active
+2026-04-30T19:16:45.727666+00:00,auto,mean-reversion-bot,mean-reversion-bot,mean_reversion,1.0,KEEP,Recommended bot already active
+2026-04-30T19:17:00.769697+00:00,auto,mean-reversion-bot,mean-reversion-bot,mean_reversion,1.0,KEEP,Recommended bot already active

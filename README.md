@@ -215,3 +215,46 @@ Expectations:
  /recommend returns recommended_bot
  test_recommendation.py works
  recommend_from_latest_fingerprints.py works
+
+## Phase 6: MetaML Orchestrator
+
+Phase 6 adds:
+
+- Orchestrator service
+- ML recommendation polling
+- Manual human-in-the-loop approval
+- Auto-switch mode
+- Active bot state file
+- Orchestrator decision log
+
+### Run Orchestrator
+Must have Results from 4/5. 
+Manual mode:
+
+```bash
+PYTHONPATH=. ORCHESTRATOR_MODE=manual ORCHESTRATOR_POLL_SECONDS=15 python services/orchestrator/orchestrator.py
+
+Auto Mode:
+
+PYTHONPATH=. ORCHESTRATOR_MODE=auto ORCHESTRATOR_POLL_SECONDS=15 python services/orchestrator/orchestrator.py
+
+Run Once (no looping):
+PYTHONPATH=. ORCHESTRATOR_MODE=manual python scripts/test_orchestrator_once.py
+
+View Active Bot:
+PYTHONPATH=. python scripts/view_active_bot.py
+
+View Decisions:
+PYTHONPATH=. python scripts/view_orchestrator_decisions.py
+
+Expectations:
+ orchestrator.py starts
+ it reads latest bot fingerprints
+ it calls inference API
+ it receives recommended_bot
+ manual mode asks for approval
+ auto mode switches automatically
+ active_bot.json is created
+ orchestrator_decisions.csv is created
+ view_active_bot.py works
+ view_orchestrator_decisions.py works
