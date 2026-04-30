@@ -1,5 +1,6 @@
 from shared.libs.mq import setup_channel, publish_json, decode_json
 from shared.libs.bot_utils import make_order, RollingWindow
+from shared.libs.active_bot import is_active_bot, get_active_bot
 
 BOT_ID = "mean-reversion-bot"
 SYMBOL = "AAPL"
@@ -18,19 +19,26 @@ def main():
     channel.queue_bind(exchange="metaml.events", queue=queue, routing_key="market.snapshot")
 
     print(f"[{BOT_ID}] Starting mean reversion strategy...")
+    print(f"[{BOT_ID}] Will only trade when active_bot == {BOT_ID}")
 
     def callback(ch, method, properties, body):
         snapshot = decode_json(body)
+        active_bot = get_active_bot()
+
         mid = float(snapshot["mid_price"])
         prices.add(mid)
 
         print(
             f"[{BOT_ID}] Snapshot mid={mid} "
-            f"regime={snapshot['regime']}"
+            f"regime={snapshot['regime']} active_bot={active_bot}"
         )
 
         if not prices.ready():
             print(f"[{BOT_ID}] Waiting for enough price history...")
+            return
+
+        if not is_active_bot(BOT_ID):
+            print(f"[{BOT_ID}] Idle: not currently active.")
             return
 
         avg_price = prices.mean()
@@ -42,7 +50,7 @@ def main():
             side = "BUY"
         else:
             print(
-                f"[{BOT_ID}] No strong mean-reversion signal. "
+                f"[{BOT_ID}] ACTIVE but no mean-reversion signal. "
                 f"deviation={deviation:.2f}"
             )
             return
@@ -58,7 +66,7 @@ def main():
         publish_json(channel, "orders.new", order)
 
         print(
-            f"[{BOT_ID}] Mean-reversion signal deviation={deviation:.2f}. "
+            f"[{BOT_ID}] ACTIVE: Mean-reversion deviation={deviation:.2f}. "
             f"Sent {side} qty={TRADE_QTY}"
         )
 

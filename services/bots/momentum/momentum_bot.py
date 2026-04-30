@@ -1,5 +1,6 @@
 from shared.libs.mq import setup_channel, publish_json, decode_json
 from shared.libs.bot_utils import make_order, RollingWindow
+from shared.libs.active_bot import is_active_bot, get_active_bot
 
 BOT_ID = "momentum-bot"
 SYMBOL = "AAPL"
@@ -18,19 +19,26 @@ def main():
     channel.queue_bind(exchange="metaml.events", queue=queue, routing_key="market.snapshot")
 
     print(f"[{BOT_ID}] Starting momentum strategy...")
+    print(f"[{BOT_ID}] Will only trade when active_bot == {BOT_ID}")
 
     def callback(ch, method, properties, body):
         snapshot = decode_json(body)
+        active_bot = get_active_bot()
+
         mid = float(snapshot["mid_price"])
         prices.add(mid)
 
         print(
             f"[{BOT_ID}] Snapshot mid={mid} "
-            f"regime={snapshot['regime']}"
+            f"regime={snapshot['regime']} active_bot={active_bot}"
         )
 
         if not prices.ready():
             print(f"[{BOT_ID}] Waiting for enough price history...")
+            return
+
+        if not is_active_bot(BOT_ID):
+            print(f"[{BOT_ID}] Idle: not currently active.")
             return
 
         price_change = prices.last() - prices.first()
@@ -40,7 +48,7 @@ def main():
         elif price_change < -THRESHOLD:
             side = "SELL"
         else:
-            print(f"[{BOT_ID}] No strong momentum. change={price_change:.2f}")
+            print(f"[{BOT_ID}] ACTIVE but no strong momentum. change={price_change:.2f}")
             return
 
         order = make_order(
@@ -54,7 +62,7 @@ def main():
         publish_json(channel, "orders.new", order)
 
         print(
-            f"[{BOT_ID}] Momentum signal change={price_change:.2f}. "
+            f"[{BOT_ID}] ACTIVE: Momentum change={price_change:.2f}. "
             f"Sent {side} qty={TRADE_QTY}"
         )
 

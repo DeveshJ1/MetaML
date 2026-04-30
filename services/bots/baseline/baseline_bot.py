@@ -2,6 +2,7 @@ import random
 
 from shared.libs.mq import setup_channel, publish_json, decode_json
 from shared.libs.bot_utils import make_order
+from shared.libs.active_bot import is_active_bot, get_active_bot
 
 BOT_ID = "baseline-bot"
 SYMBOL = "AAPL"
@@ -14,14 +15,20 @@ def main():
     channel.queue_bind(exchange="metaml.events", queue=queue, routing_key="market.snapshot")
 
     print(f"[{BOT_ID}] Starting baseline random strategy...")
+    print(f"[{BOT_ID}] Will only trade when active_bot == {BOT_ID}")
 
     def callback(ch, method, properties, body):
         snapshot = decode_json(body)
+        active_bot = get_active_bot()
 
         print(
-            f"[{BOT_ID}] Snapshot "
-            f"mid={snapshot['mid_price']} regime={snapshot['regime']}"
+            f"[{BOT_ID}] Snapshot mid={snapshot['mid_price']} "
+            f"regime={snapshot['regime']} active_bot={active_bot}"
         )
+
+        if not is_active_bot(BOT_ID):
+            print(f"[{BOT_ID}] Idle: not currently active.")
+            return
 
         if random.random() < 0.35:
             side = random.choice(["BUY", "SELL"])
@@ -36,11 +43,7 @@ def main():
             )
 
             publish_json(channel, "orders.new", order)
-
-            print(
-                f"[{BOT_ID}] Sent MARKET order: "
-                f"{side} qty={quantity}"
-            )
+            print(f"[{BOT_ID}] ACTIVE: Sent MARKET order {side} qty={quantity}")
 
     channel.basic_consume(queue=queue, on_message_callback=callback, auto_ack=True)
 

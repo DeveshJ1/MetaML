@@ -258,3 +258,41 @@ Expectations:
  orchestrator_decisions.csv is created
  view_active_bot.py works
  view_orchestrator_decisions.py works
+
+## Phase 7: Active Bot Control
+
+Phase 7 adds:
+
+- Shared active bot helper
+- Bots observe market data but only active bot trades
+- Manual active-bot setter
+- Orchestrator-controlled trading behavior
+
+### Set Active Bot Manually
+
+```bash
+PYTHONPATH=. python scripts/set_active_bot.py baseline-bot
+PYTHONPATH=. python scripts/set_active_bot.py momentum-bot
+PYTHONPATH=. python scripts/set_active_bot.py mean-reversion-bot
+PYTHONPATH=. python scripts/set_active_bot.py none
+
+Run Core Bot Control Test
+docker compose up -d
+PYTHONPATH=. python scripts/set_active_bot.py baseline-bot
+
+Run each in a separate terminal:
+PYTHONPATH=. python services/market-engine/market_engine.py
+PYTHONPATH=. python services/replay-service/replay_service.py
+PYTHONPATH=. python services/bots/baseline/baseline_bot.py
+PYTHONPATH=. python services/bots/momentum/momentum_bot.py
+PYTHONPATH=. python services/bots/mean-reversion/mean_reversion_bot.py
+PYTHONPATH=. python scripts/monitor_trades.py
+
+Only the selected active bot should send orders.
+Run With Orchestrator:
+
+PYTHONPATH=. FINGERPRINT_WINDOW_SECONDS=15 python services/fingerprint/fingerprint_service.py
+PYTHONPATH=. python services/inference/train_model.py
+PYTHONPATH=. uvicorn services.inference.inference_api:app --host 0.0.0.0 --port 8000
+PYTHONPATH=. ORCHESTRATOR_MODE=manual ORCHESTRATOR_POLL_SECONDS=15 python services/orchestrator/orchestrator.py
+
