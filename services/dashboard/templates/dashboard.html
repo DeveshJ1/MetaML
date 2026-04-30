@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MetaML Dashboard</title>
+  <meta http-equiv="refresh" content="5">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 24px;
+      background: #f7f7f7;
+      color: #222;
+    }
+
+    h1 {
+      margin-bottom: 4px;
+    }
+
+    .subtitle {
+      color: #555;
+      margin-bottom: 24px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 18px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      margin-bottom: 18px;
+    }
+
+    .big {
+      font-size: 26px;
+      font-weight: bold;
+    }
+
+    .muted {
+      color: #666;
+      font-size: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+
+    th, td {
+      border-bottom: 1px solid #ddd;
+      padding: 6px;
+      text-align: left;
+    }
+
+    th {
+      background: #f1f1f1;
+    }
+
+    select, button {
+      padding: 8px;
+      font-size: 14px;
+    }
+
+    button {
+      cursor: pointer;
+      border-radius: 6px;
+      border: 1px solid #333;
+      background: #222;
+      color: white;
+    }
+
+    .good {
+      color: green;
+      font-weight: bold;
+    }
+
+    .bad {
+      color: darkred;
+      font-weight: bold;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>MetaML Operator Dashboard</h1>
+  <div class="subtitle">
+    Human-in-the-loop control for intelligent trading bot orchestration.
+    Page refreshes every 5 seconds.
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Active Bot</h2>
+      <div class="big">
+        {{ active_state.active_bot if active_state.active_bot else "None" }}
+      </div>
+      <p class="muted">
+        Current bot allowed to place trades.
+      </p>
+
+      <form method="post" action="/set-active-bot">
+        <label for="bot">Manual switch:</label>
+        <select name="bot" id="bot">
+          {% for bot in valid_bots %}
+          <option value="{{ bot }}">{{ bot }}</option>
+          {% endfor %}
+        </select>
+        <button type="submit">Set Active Bot</button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h2>Market / Trade Summary</h2>
+      <p><b>Total logged trades:</b> {{ trade_summary.trade_count }}</p>
+      <p><b>Latest trade price:</b> {{ trade_summary.latest_price }}</p>
+      <p><b>Latest regime:</b> {{ trade_summary.latest_regime }}</p>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Latest Bot Fingerprints</h2>
+    {% if fingerprints %}
+    <table>
+      <tr>
+        <th>Bot</th>
+        <th>Strategy</th>
+        <th>Regime</th>
+        <th>Trades</th>
+        <th>Position</th>
+        <th>Equity</th>
+        <th>PnL</th>
+        <th>Drawdown</th>
+        <th>Recommend?</th>
+      </tr>
+      {% for row in fingerprints %}
+      <tr>
+        <td>{{ row.bot_id }}</td>
+        <td>{{ row.strategy_type }}</td>
+        <td>{{ row.market_regime }}</td>
+        <td>{{ row.trade_count }}</td>
+        <td>{{ row.net_position }}</td>
+        <td>{{ row.equity }}</td>
+        <td class="{{ 'good' if row.pnl|float >= 0 else 'bad' }}">{{ row.pnl }}</td>
+        <td>{{ row.drawdown }}</td>
+        <td>{{ row.recommended_for_future }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}
+    <p>No fingerprints found yet.</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h2>Latest Orchestrator Decisions</h2>
+    {% if decisions %}
+    <table>
+      <tr>
+        <th>Timestamp</th>
+        <th>Mode</th>
+        <th>Previous</th>
+        <th>Recommended</th>
+        <th>Strategy</th>
+        <th>Confidence</th>
+        <th>Decision</th>
+        <th>Reason</th>
+      </tr>
+      {% for row in decisions %}
+      <tr>
+        <td>{{ row.timestamp }}</td>
+        <td>{{ row.mode }}</td>
+        <td>{{ row.previous_active_bot }}</td>
+        <td>{{ row.recommended_bot }}</td>
+        <td>{{ row.recommended_strategy }}</td>
+        <td>{{ row.confidence_score }}</td>
+        <td>{{ row.decision }}</td>
+        <td>{{ row.reason }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}
+    <p>No orchestrator decisions found yet.</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h2>Latest Trades</h2>
+    {% if trades %}
+    <table>
+      <tr>
+        <th>Time</th>
+        <th>Symbol</th>
+        <th>Price</th>
+        <th>Qty</th>
+        <th>Buyer</th>
+        <th>Seller</th>
+        <th>Regime</th>
+      </tr>
+      {% for row in trades %}
+      <tr>
+        <td>{{ row.timestamp }}</td>
+        <td>{{ row.symbol }}</td>
+        <td>{{ row.price }}</td>
+        <td>{{ row.quantity }}</td>
+        <td>{{ row.buyer_bot_id }}</td>
+        <td>{{ row.seller_bot_id }}</td>
+        <td>{{ row.market_regime }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}
+    <p>No trades logged yet. Start log_trades.py to populate this table.</p>
+    {% endif %}
+  </div>
+
+</body>
+</html>

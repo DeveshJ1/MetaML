@@ -296,3 +296,50 @@ PYTHONPATH=. python services/inference/train_model.py
 PYTHONPATH=. uvicorn services.inference.inference_api:app --host 0.0.0.0 --port 8000
 PYTHONPATH=. ORCHESTRATOR_MODE=manual ORCHESTRATOR_POLL_SECONDS=15 python services/orchestrator/orchestrator.py
 
+## Phase 8: Operator Dashboard
+
+Phase 8 adds:
+
+- FastAPI dashboard
+- Active bot display
+- Manual active bot switching
+- Latest fingerprints table
+- Latest orchestrator decisions table
+- Latest trades table
+
+### Run Dashboard
+
+```bash
+PYTHONPATH=. uvicorn services.dashboard.dashboard_app:app --host 0.0.0.0 --port 8501
+
+Open:
+http://localhost:8501
+
+Full Dashboard Demo:
+docker compose up -d
+PYTHONPATH=. python scripts/set_active_bot.py baseline-bot
+Run in separate terminals:
+PYTHONPATH=. python services/market-engine/market_engine.py
+PYTHONPATH=. python services/replay-service/replay_service.py
+PYTHONPATH=. python services/bots/baseline/baseline_bot.py
+PYTHONPATH=. python services/bots/momentum/momentum_bot.py
+PYTHONPATH=. python services/bots/mean-reversion/mean_reversion_bot.py
+PYTHONPATH=. FINGERPRINT_WINDOW_SECONDS=15 python services/fingerprint/fingerprint_service.py
+PYTHONPATH=. python scripts/log_trades.py
+PYTHONPATH=. uvicorn services.dashboard.dashboard_app:app --host 0.0.0.0 --port 8501
+Optional (run inference + orchestrator too)
+PYTHONPATH=. python services/inference/train_model.py
+PYTHONPATH=. uvicorn services.inference.inference_api:app --host 0.0.0.0 --port 8000
+PYTHONPATH=. ORCHESTRATOR_MODE=auto ORCHESTRATOR_POLL_SECONDS=15 python services/orchestrator/orchestrator.py
+
+Expectations:
+ dashboard_app.py exists
+ dashboard.html exists
+ dashboard starts on port 8501
+ http://localhost:8501 opens
+ active bot is displayed
+ manual switch form works
+ latest fingerprints appear
+ latest trades appear when log_trades.py is running
+ orchestrator decisions appear when orchestrator is running
+ only selected bot trades after switching from dashboard

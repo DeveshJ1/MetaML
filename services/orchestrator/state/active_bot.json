@@ -1,37 +1,37 @@
 {
   "active_bot": "mean-reversion-bot",
-  "last_switch_time": 1777577933.857609,
+  "last_switch_time": 1777580047.415642,
   "last_decision": {
-    "timestamp": "2026-04-30T19:45:07.473944+00:00",
+    "timestamp": "2026-04-30T20:14:55.943991+00:00",
     "decision": "KEEP",
     "recommendation": {
       "recommended_bot": "mean-reversion-bot",
       "recommended_strategy": "mean_reversion",
-      "confidence_score": 0.99,
+      "confidence_score": 0.97,
       "rankings": [
         {
           "bot_id": "mean-reversion-bot",
           "strategy_type": "mean_reversion",
-          "score": 0.99,
-          "market_regime": "TREND_UP",
-          "pnl": 19.05,
+          "score": 0.97,
+          "market_regime": "TREND_DOWN",
+          "pnl": 36.6,
           "drawdown": 0.0
         },
         {
           "bot_id": "baseline-bot",
           "strategy_type": "baseline_random",
-          "score": 0.93,
-          "market_regime": "TREND_UP",
-          "pnl": 0.18,
-          "drawdown": 0.0
+          "score": 0.26,
+          "market_regime": "TREND_DOWN",
+          "pnl": -1.12,
+          "drawdown": 13.58
         },
         {
           "bot_id": "momentum-bot",
           "strategy_type": "momentum",
-          "score": 0.01,
-          "market_regime": "TREND_UP",
-          "pnl": -10.38,
-          "drawdown": 10.38
+          "score": 0.0,
+          "market_regime": "TREND_DOWN",
+          "pnl": 0.0,
+          "drawdown": 0.0
         }
       ]
     }
