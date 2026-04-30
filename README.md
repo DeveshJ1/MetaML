@@ -181,4 +181,37 @@ Expectations:
  each bot has fingerprint rows
  fingerprints include pnl, drawdown, regime, trade count
  view_fingerprints.py summarizes bot performance
+## Phase 5: ML Recommendation Model
 
+Phase 5 adds:
+
+- ML training from bot fingerprints
+- Saved model artifact
+- FastAPI inference service
+- Recommendation endpoint
+- Scripts to test recommendations
+
+### Train Model
+Must have results from Phase 4:
+```bash
+PYTHONPATH=. python services/inference/train_model.py
+
+Start Inference API:
+PYTHONPATH=. uvicorn services.inference.inference_api:app --host 0.0.0.0 --port 8000
+Health Check : curl http://localhost:8000/health
+
+Test Recommendation:
+PYTHONPATH=. python scripts/test_recommendation.py
+
+Recommendation from latest fingerprints:
+PYTHONPATH=. python scripts/recommend_from_latest_fingerprints.py
+
+Expectations:
+ bot_fingerprints.csv has data
+ train_model.py runs
+ data/models/bot_recommender.pkl is created
+ inference_api.py starts with uvicorn
+ /health returns model_loaded true
+ /recommend returns recommended_bot
+ test_recommendation.py works
+ recommend_from_latest_fingerprints.py works
