@@ -1,0 +1,17 @@
+{
+  "baseline-bot": {
+    "strategy_type": "baseline_random",
+    "risk_profile": "low",
+    "description": "Random baseline trading strategy"
+  },
+  "momentum-bot": {
+    "strategy_type": "momentum",
+    "risk_profile": "medium",
+    "description": "Trades in direction of recent price movement"
+  },
+  "mean-reversion-bot": {
+    "strategy_type": "mean_reversion",
+    "risk_profile": "medium",
+    "description": "Trades against deviation from recent average price"
+  }
+}

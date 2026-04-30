@@ -141,4 +141,44 @@ Expectations:
  PnL tracker shows all active bots
  Trade logger can log trades from all bots
 
+## Phase 4: Bot Fingerprints
+
+Phase 4 adds:
+
+- Bot taxonomy metadata
+- Fingerprint service
+- Time-windowed bot performance summaries
+- ML-ready dataset at `data/logs/bot_fingerprints.csv`
+
+### Run Phase 4
+
+```bash
+cd metaml
+source .venv/bin/activate
+
+docker compose up -d
+Then run each in a separate terminal:
+PYTHONPATH=. python services/market-engine/market_engine.py
+PYTHONPATH=. python services/replay-service/replay_service.py
+PYTHONPATH=. python services/bots/baseline/baseline_bot.py
+PYTHONPATH=. python services/bots/momentum/momentum_bot.py
+PYTHONPATH=. python services/bots/mean-reversion/mean_reversion_bot.py
+PYTHONPATH=. python scripts/monitor_trades.py
+PYTHONPATH=. python scripts/track_all_pnl.py
+PYTHONPATH=. python scripts/log_trades.py
+PYTHONPATH=. FINGERPRINT_WINDOW_SECONDS=30 python services/fingerprint/fingerprint_service.py
+
+To view fingerprint summary:
+PYTHONPATH=. python scripts/view_fingerprints.py
+tail -n 10 data/logs/bot_fingerprints.csv
+
+Expectations:
+ bot_taxonomy.json exists
+ fingerprint_service.py runs
+ fingerprint service receives market snapshots
+ fingerprint service receives trades
+ service writes data/logs/bot_fingerprints.csv
+ each bot has fingerprint rows
+ fingerprints include pnl, drawdown, regime, trade count
+ view_fingerprints.py summarizes bot performance
 
