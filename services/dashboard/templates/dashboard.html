@@ -216,6 +216,59 @@
     <p>No trades logged yet. Start log_trades.py to populate this table.</p>
     {% endif %}
   </div>
+  <div class="card">
+    <h2>Decentralized Service Registry</h2>
+    {% if registry %}
+    <table>
+      <tr>
+        <th>Service ID</th>
+        <th>Type</th>
+        <th>Endpoint</th>
+        <th>Cloud</th>
+        <th>Status</th>
+        <th>Heartbeat</th>
+      </tr>
+      {% for service_id, svc in registry.items() %}
+      <tr>
+        <td>{{ service_id }}</td>
+        <td>{{ svc.service_type }}</td>
+        <td>{{ svc.endpoint }}</td>
+        <td>{{ svc.cloud }}</td>
+        <td>{{ svc.status }}</td>
+        <td>{{ svc.last_heartbeat }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}
+    <p>No registered services found.</p>
+    {% endif %}
+  </div>
 
+  <div class="card">
+    <h2>Tamper-Evident Audit Chain</h2>
+    {% if audit_events %}
+    <table>
+      <tr>
+        <th>Index</th>
+        <th>Timestamp</th>
+        <th>Event Type</th>
+        <th>Previous Hash</th>
+        <th>Event Hash</th>
+      </tr>
+      {% for row in audit_events %}
+      <tr>
+        <td>{{ row.index }}</td>
+        <td>{{ row.timestamp }}</td>
+        <td>{{ row.event_type }}</td>
+        <td>{{ row.previous_hash }}</td>
+        <td>{{ row.event_hash }}</td>
+      </tr>
+      {% endfor %}
+    </table>
+    {% else %}
+    <p>No audit events found yet.</p>
+    {% endif %}
+  </div>
+  
 </body>
 </html>

@@ -1,0 +1,120 @@
+{
+  "rabbitmq-message-bus": {
+    "service_id": "rabbitmq-message-bus",
+    "service_type": "event_bus",
+    "endpoint": "amqp://localhost:5672",
+    "cloud": "local-dev",
+    "status": "healthy",
+    "metadata": {
+      "dashboard": "http://localhost:15672",
+      "topics": [
+        "orders.new",
+        "trade.executed",
+        "market.snapshot"
+      ]
+    },
+    "last_heartbeat": "2026-05-02T01:21:11.710091+00:00"
+  },
+  "market-engine": {
+    "service_id": "market-engine",
+    "service_type": "market_infrastructure_node",
+    "endpoint": "local-process:services/market-engine/market_engine.py",
+    "cloud": "aws-target",
+    "status": "healthy",
+    "metadata": {
+      "role": "matching_engine",
+      "symbols": [
+        "AAPL"
+      ]
+    },
+    "last_heartbeat": "2026-05-02T01:21:11.710881+00:00"
+  },
+  "replay-service": {
+    "service_id": "replay-service",
+    "service_type": "market_replay_node",
+    "endpoint": "local-process:services/replay-service/replay_service.py",
+    "cloud": "aws-target",
+    "status": "healthy",
+    "metadata": {
+      "source": "hybrid_csv_replay"
+    },
+    "last_heartbeat": "2026-05-02T01:21:11.711223+00:00"
+  },
+  "baseline-bot": {
+    "service_id": "baseline-bot",
+    "service_type": "execution_node",
+    "endpoint": "local-process:services/bots/baseline/baseline_bot.py",
+    "cloud": "aws-target",
+    "status": "healthy",
+    "metadata": {
+      "strategy": "baseline_random"
+    },
+    "last_heartbeat": "2026-05-02T01:21:11.711509+00:00"
+  },
+  "momentum-bot": {
+    "service_id": "momentum-bot",
+    "service_type": "execution_node",
+    "endpoint": "local-process:services/bots/momentum/momentum_bot.py",
+    "cloud": "aws-target",
+    "status": "healthy",
+    "metadata": {
+      "strategy": "momentum"
+    },
+    "last_heartbeat": "2026-05-02T01:21:11.711879+00:00"
+  },
+  "mean-reversion-bot": {
+    "service_id": "mean-reversion-bot",
+    "service_type": "execution_node",
+    "endpoint": "local-process:services/bots/mean-reversion/mean_reversion_bot.py",
+    "cloud": "aws-target",
+    "status": "healthy",
+    "metadata": {
+      "strategy": "mean_reversion"
+    },
+    "last_heartbeat": "2026-05-02T01:21:11.712154+00:00"
+  },
+  "fingerprint-service": {
+    "service_id": "fingerprint-service",
+    "service_type": "intelligence_node",
+    "endpoint": "local-process:services/fingerprint/fingerprint_service.py",
+    "cloud": "gcp-target",
+    "status": "healthy",
+    "metadata": {
+      "role": "feature_extraction"
+    },
+    "last_heartbeat": "2026-05-02T01:21:11.712421+00:00"
+  },
+  "inference-api": {
+    "service_id": "inference-api",
+    "service_type": "ml_inference_node",
+    "endpoint": "http://localhost:8000",
+    "cloud": "gcp-target",
+    "status": "healthy",
+    "metadata": {
+      "health": "http://localhost:8000/health"
+    },
+    "last_heartbeat": "2026-05-02T01:21:11.712676+00:00"
+  },
+  "orchestrator": {
+    "service_id": "orchestrator",
+    "service_type": "orchestration_node",
+    "endpoint": "local-process:services/orchestrator/orchestrator.py",
+    "cloud": "azure-target",
+    "status": "healthy",
+    "metadata": {
+      "mode": "manual_or_auto"
+    },
+    "last_heartbeat": "2026-05-02T01:28:49.248957+00:00"
+  },
+  "dashboard": {
+    "service_id": "dashboard",
+    "service_type": "human_in_loop_node",
+    "endpoint": "http://localhost:8501",
+    "cloud": "azure-target",
+    "status": "healthy",
+    "metadata": {
+      "health": "http://localhost:8501/health"
+    },
+    "last_heartbeat": "2026-05-02T01:21:11.713191+00:00"
+  }
+}

@@ -3,7 +3,8 @@ import json
 import os
 import time
 from datetime import datetime, timezone
-
+from shared.libs.audit_chain import append_audit_event
+from shared.libs.service_registry import heartbeat
 import pandas as pd
 import requests
 
@@ -196,6 +197,12 @@ def run_once():
     }
 
     log_decision(log_row)
+    append_audit_event(
+        event_type="ORCHESTRATOR_DECISION",
+        event_payload=log_row
+    )
+
+    heartbeat("orchestrator", status="healthy")
 
     print("\n[orchestrator] Decision")
     print("-" * 70)

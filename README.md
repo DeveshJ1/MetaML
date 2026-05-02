@@ -343,3 +343,49 @@ Expectations:
  latest trades appear when log_trades.py is running
  orchestrator decisions appear when orchestrator is running
  only selected bot trades after switching from dashboard
+
+## Phase 9: Decentralized Registry + Audit Log
+
+Phase 9 adds:
+
+- Local decentralized-style service registry
+- Service descriptors for all major nodes
+- Registry API
+- Tamper-evident hash-chain audit log
+- Audit API
+- Dashboard sections for registry and audit
+
+### Register Services
+
+```bash
+PYTHONPATH=. python scripts/register_services.py
+View Registry:
+PYTHONPATH=. python scripts/view_registry.py
+
+Test audit chain:
+PYTHONPATH=. python scripts/test_audit_chain.py
+
+View audit chain: 
+PYTHONPATH=. python scripts/view_audit_chain.py
+
+Start Registry API:
+PYTHONPATH=. uvicorn services.registry.registry_api:app --host 0.0.0.0 --port 8600
+http://localhost:8600/services
+
+Start Audit API:
+PYTHONPATH=. uvicorn services.audit.audit_api:app --host 0.0.0.0 --port 8700
+http://localhost:8700/audit/verify
+
+Expectations:
+ service_registry.py exists
+ audit_chain.py exists
+ register_services.py creates service_registry.json
+ view_registry.py shows services
+ test_audit_chain.py appends/verifies audit events
+ audit_chain.csv is created
+ orchestrator writes audit events
+ registry API runs on port 8600
+ audit API runs on port 8700
+ dashboard shows registry
+ dashboard shows audit chain
+ audit verification returns valid=True

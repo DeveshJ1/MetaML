@@ -13,6 +13,8 @@ ACTIVE_STATE_PATH = "services/orchestrator/state/active_bot.json"
 FINGERPRINT_PATH = "data/logs/bot_fingerprints.csv"
 DECISION_PATH = "data/logs/orchestrator_decisions.csv"
 TRADES_PATH = "data/logs/trades.csv"
+REGISTRY_PATH = "data/registry/service_registry.json"
+AUDIT_PATH = "data/audit/audit_chain.csv"
 
 VALID_BOTS = ["baseline-bot", "momentum-bot", "mean-reversion-bot", "none"]
 
@@ -123,6 +125,8 @@ def dashboard(request: Request):
     decisions = read_csv_tail(DECISION_PATH, 8)
     trades = read_csv_tail(TRADES_PATH, 8)
     trade_summary = summarize_trades()
+    registry = read_json(REGISTRY_PATH, {})
+    audit_events = read_csv_tail(AUDIT_PATH, 8)
 
     return templates.TemplateResponse(
         request=request,
@@ -133,7 +137,9 @@ def dashboard(request: Request):
             "decisions": decisions,
             "trades": trades,
             "trade_summary": trade_summary,
-            "valid_bots": VALID_BOTS
+            "valid_bots": VALID_BOTS,
+            "registry": registry,
+            "audit_events": audit_events
         }
     )
 
