@@ -389,3 +389,62 @@ Expectations:
  dashboard shows registry
  dashboard shows audit chain
  audit verification returns valid=True
+
+## Phase 10: Dockerized Full-System Demo
+
+Phase 10 adds:
+
+- Dockerfile
+- Full docker-compose setup
+- One-command local demo
+- Containerized services for:
+  - RabbitMQ
+  - market engine
+  - replay service
+  - strategy bots
+  - fingerprint service
+  - inference API
+  - orchestrator
+  - dashboard
+  - registry API
+  - audit API
+
+### Prepare Demo
+
+Make sure model exists:
+
+```bash
+PYTHONPATH=. python services/inference/train_model.py
+
+Set initial active bot:
+PYTHONPATH=. python scripts/set_active_bot.py baseline-bot
+
+Run Docker Demo:
+docker compose up --build
+
+Demo URLS:
+Dashboard:     http://localhost:8501
+Inference API: http://localhost:8000/health
+Registry API:  http://localhost:8600/services
+Audit API:     http://localhost:8700/audit/verify
+RabbitMQ UI:   http://localhost:15672
+
+Rabbit MQ credentials:
+metaml / metaml
+
+Stop Demo:
+docker compose down
+
+Expecatations:
+[ ] Dockerfile exists
+[ ] docker-compose.yml includes full system
+ docker compose up --build starts successfully
+ dashboard opens at localhost:8501
+ inference API health works
+ registry API works
+ audit API verify works
+ trades are generated
+ fingerprints are generated
+ orchestrator decisions are generated
+ only active bot trades
+ docker compose down stops system

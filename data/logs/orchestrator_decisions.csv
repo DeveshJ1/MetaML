@@ -36,3 +36,10 @@ timestamp,mode,previous_active_bot,recommended_bot,recommended_strategy,confiden
 2026-05-02T01:28:19.198392+00:00,auto,momentum-bot,baseline-bot,baseline_random,0.12,REJECT,Confidence 0.12 below threshold 0.50
 2026-05-02T01:28:34.219819+00:00,auto,momentum-bot,baseline-bot,baseline_random,0.11,REJECT,Confidence 0.11 below threshold 0.50
 2026-05-02T01:28:49.248362+00:00,auto,momentum-bot,baseline-bot,baseline_random,0.12,REJECT,Confidence 0.12 below threshold 0.50
+2026-05-02T22:24:48.119782+00:00,auto,baseline-bot,baseline-bot,baseline_random,0.11,REJECT,Confidence 0.11 below threshold 0.50
+2026-05-02T22:25:03.136239+00:00,auto,baseline-bot,baseline-bot,baseline_random,0.91,KEEP,Recommended bot already active
+2026-05-02T22:25:18.170419+00:00,auto,baseline-bot,baseline-bot,baseline_random,0.14,REJECT,Confidence 0.14 below threshold 0.50
+2026-05-02T22:25:33.201413+00:00,auto,baseline-bot,baseline-bot,baseline_random,0.92,KEEP,Recommended bot already active
+2026-05-02T22:25:48.232630+00:00,auto,baseline-bot,baseline-bot,baseline_random,0.1,REJECT,Confidence 0.10 below threshold 0.50
+2026-05-02T22:26:03.266262+00:00,auto,baseline-bot,baseline-bot,baseline_random,0.36,REJECT,Confidence 0.36 below threshold 0.50
+2026-05-02T22:26:18.299283+00:00,auto,baseline-bot,baseline-bot,baseline_random,0.06,REJECT,Confidence 0.06 below threshold 0.50

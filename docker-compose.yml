@@ -13,3 +13,191 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
+  registry-bootstrap:
+    build: .
+    container_name: metaml-registry-bootstrap
+    command: python scripts/register_services.py
+    volumes:
+      - ./data:/app/data
+      - ./services/orchestrator/state:/app/services/orchestrator/state
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  market-engine:
+    build: .
+    container_name: metaml-market-engine
+    command: python services/market-engine/market_engine.py
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: metaml
+      RABBITMQ_PASSWORD: metaml
+    volumes:
+      - ./data:/app/data
+      - ./services/orchestrator/state:/app/services/orchestrator/state
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  replay-service:
+    build: .
+    container_name: metaml-replay-service
+    command: python services/replay-service/replay_service.py
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: metaml
+      RABBITMQ_PASSWORD: metaml
+      REPLAY_SPEED_SECONDS: 1.0
+    volumes:
+      - ./data:/app/data
+      - ./services/orchestrator/state:/app/services/orchestrator/state
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  baseline-bot:
+    build: .
+    container_name: metaml-baseline-bot
+    command: python services/bots/baseline/baseline_bot.py
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: metaml
+      RABBITMQ_PASSWORD: metaml
+    volumes:
+      - ./data:/app/data
+      - ./services/orchestrator/state:/app/services/orchestrator/state
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  momentum-bot:
+    build: .
+    container_name: metaml-momentum-bot
+    command: python services/bots/momentum/momentum_bot.py
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: metaml
+      RABBITMQ_PASSWORD: metaml
+    volumes:
+      - ./data:/app/data
+      - ./services/orchestrator/state:/app/services/orchestrator/state
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  mean-reversion-bot:
+    build: .
+    container_name: metaml-mean-reversion-bot
+    command: python services/bots/mean-reversion/mean_reversion_bot.py
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: metaml
+      RABBITMQ_PASSWORD: metaml
+    volumes:
+      - ./data:/app/data
+      - ./services/orchestrator/state:/app/services/orchestrator/state
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  fingerprint-service:
+    build: .
+    container_name: metaml-fingerprint-service
+    command: python services/fingerprint/fingerprint_service.py
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: metaml
+      RABBITMQ_PASSWORD: metaml
+      FINGERPRINT_WINDOW_SECONDS: 15
+    volumes:
+      - ./data:/app/data
+      - ./services/orchestrator/state:/app/services/orchestrator/state
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  trade-logger:
+    build: .
+    container_name: metaml-trade-logger
+    command: python scripts/log_trades.py
+    environment:
+      RABBITMQ_HOST: rabbitmq
+      RABBITMQ_PORT: 5672
+      RABBITMQ_USER: metaml
+      RABBITMQ_PASSWORD: metaml
+    volumes:
+      - ./data:/app/data
+      - ./services/orchestrator/state:/app/services/orchestrator/state
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  inference-api:
+    build: .
+    container_name: metaml-inference-api
+    command: uvicorn services.inference.inference_api:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    environment:
+      MODEL_PATH: data/models/bot_recommender.pkl
+    volumes:
+      - ./data:/app/data
+      - ./services/orchestrator/state:/app/services/orchestrator/state
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+  orchestrator:
+    build: .
+    container_name: metaml-orchestrator
+    command: python services/orchestrator/orchestrator.py
+    environment:
+      INFERENCE_URL: http://inference-api:8000/recommend
+      ORCHESTRATOR_MODE: auto
+      ORCHESTRATOR_POLL_SECONDS: 15
+      ORCHESTRATOR_COOLDOWN_SECONDS: 30
+      ORCHESTRATOR_MIN_CONFIDENCE: 0.50
+    volumes:
+      - ./data:/app/data
+      - ./services/orchestrator/state:/app/services/orchestrator/state
+    depends_on:
+      - inference-api
+
+  dashboard:
+    build: .
+    container_name: metaml-dashboard
+    command: uvicorn services.dashboard.dashboard_app:app --host 0.0.0.0 --port 8501
+    ports:
+      - "8501:8501"
+    volumes:
+      - ./data:/app/data
+      - ./services/orchestrator/state:/app/services/orchestrator/state
+    depends_on:
+      - orchestrator
+
+  registry-api:
+    build: .
+    container_name: metaml-registry-api
+    command: uvicorn services.registry.registry_api:app --host 0.0.0.0 --port 8600
+    ports:
+      - "8600:8600"
+    volumes:
+      - ./data:/app/data
+      - ./services/orchestrator/state:/app/services/orchestrator/state
+
+  audit-api:
+    build: .
+    container_name: metaml-audit-api
+    command: uvicorn services.audit.audit_api:app --host 0.0.0.0 --port 8700
+    ports:
+      - "8700:8700"
+    volumes:
+      - ./data:/app/data
+      - ./services/orchestrator/state:/app/services/orchestrator/state

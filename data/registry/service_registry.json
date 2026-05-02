@@ -13,7 +13,7 @@
         "market.snapshot"
       ]
     },
-    "last_heartbeat": "2026-05-02T01:21:11.710091+00:00"
+    "last_heartbeat": "2026-05-02T22:24:32.601433+00:00"
   },
   "market-engine": {
     "service_id": "market-engine",
@@ -27,7 +27,7 @@
         "AAPL"
       ]
     },
-    "last_heartbeat": "2026-05-02T01:21:11.710881+00:00"
+    "last_heartbeat": "2026-05-02T22:24:32.604655+00:00"
   },
   "replay-service": {
     "service_id": "replay-service",
@@ -38,7 +38,7 @@
     "metadata": {
       "source": "hybrid_csv_replay"
     },
-    "last_heartbeat": "2026-05-02T01:21:11.711223+00:00"
+    "last_heartbeat": "2026-05-02T22:24:32.610691+00:00"
   },
   "baseline-bot": {
     "service_id": "baseline-bot",
@@ -49,7 +49,7 @@
     "metadata": {
       "strategy": "baseline_random"
     },
-    "last_heartbeat": "2026-05-02T01:21:11.711509+00:00"
+    "last_heartbeat": "2026-05-02T22:24:32.615703+00:00"
   },
   "momentum-bot": {
     "service_id": "momentum-bot",
@@ -60,7 +60,7 @@
     "metadata": {
       "strategy": "momentum"
     },
-    "last_heartbeat": "2026-05-02T01:21:11.711879+00:00"
+    "last_heartbeat": "2026-05-02T22:24:32.619610+00:00"
   },
   "mean-reversion-bot": {
     "service_id": "mean-reversion-bot",
@@ -71,7 +71,7 @@
     "metadata": {
       "strategy": "mean_reversion"
     },
-    "last_heartbeat": "2026-05-02T01:21:11.712154+00:00"
+    "last_heartbeat": "2026-05-02T22:24:32.623949+00:00"
   },
   "fingerprint-service": {
     "service_id": "fingerprint-service",
@@ -82,7 +82,7 @@
     "metadata": {
       "role": "feature_extraction"
     },
-    "last_heartbeat": "2026-05-02T01:21:11.712421+00:00"
+    "last_heartbeat": "2026-05-02T22:24:32.626457+00:00"
   },
   "inference-api": {
     "service_id": "inference-api",
@@ -93,7 +93,7 @@
     "metadata": {
       "health": "http://localhost:8000/health"
     },
-    "last_heartbeat": "2026-05-02T01:21:11.712676+00:00"
+    "last_heartbeat": "2026-05-02T22:24:32.627636+00:00"
   },
   "orchestrator": {
     "service_id": "orchestrator",
@@ -104,7 +104,7 @@
     "metadata": {
       "mode": "manual_or_auto"
     },
-    "last_heartbeat": "2026-05-02T01:28:49.248957+00:00"
+    "last_heartbeat": "2026-05-02T22:26:18.300882+00:00"
   },
   "dashboard": {
     "service_id": "dashboard",
@@ -115,6 +115,6 @@
     "metadata": {
       "health": "http://localhost:8501/health"
     },
-    "last_heartbeat": "2026-05-02T01:21:11.713191+00:00"
+    "last_heartbeat": "2026-05-02T22:24:32.629990+00:00"
   }
 }
