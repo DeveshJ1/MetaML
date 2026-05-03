@@ -477,3 +477,14 @@ Purpose: Demonstrates human-in-the-loop operator interface hosted on Azure.
 - PaaS services: App Runner, Cloud Run, Azure Container Apps
 - Decentralized/P2P-style functionality: registry + audit chain
 - IAN functionality: orchestrator uses ML recommendation and human-in-loop control
+
+Expecattions:
+ AWS registry API deployed
+ AWS /health endpoint works
+ GCP inference API deployed
+ GCP /health endpoint works
+ Azure dashboard deployed
+ Azure dashboard URL opens
+ register_cloud_services.py records cloud endpoints
+ Registry shows AWS/GCP/Azure services
+ docs/phase11_multicloud_deployment.md exists
