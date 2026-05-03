@@ -488,3 +488,151 @@ Expecattions:
  register_cloud_services.py records cloud endpoints
  Registry shows AWS/GCP/Azure services
  docs/phase11_multicloud_deployment.md exists
+
+# Phase 11.5: Cloud Data Services Integration
+
+## Purpose
+
+This phase increases the sophistication of the MetaML implementation by integrating cloud-native managed data services across AWS, GCP, and Azure.
+
+The original plan considered AWS Timestream for time-series telemetry. However, the AWS account did not have access to Timestream for LiveAnalytics, so the AWS data layer was adapted to use Amazon S3 and Amazon Athena instead.
+
+## Final Cloud Data Architecture
+
+| Cloud | Service Used | Purpose |
+|---|---|---|
+| AWS | Amazon S3 + Amazon Athena | Store and query trading telemetry and logs |
+| GCP | BigQuery | Store analytics-ready bot fingerprints, trades, and decisions |
+| Azure | Cosmos DB | Store bot taxonomy, fingerprints, and orchestration records |
+
+---
+
+## AWS: S3 + Athena
+
+### Purpose
+
+AWS stores raw telemetry files in S3 and queries them using Athena.
+
+### Data uploaded
+
+- `data/logs/trades.csv`
+- `data/logs/bot_fingerprints.csv`
+- `data/logs/orchestrator_decisions.csv`
+
+### S3 layout
+
+```text
+s3://metaml-telemetry-<account-id>/trades/trades.csv
+s3://metaml-telemetry-<account-id>/fingerprints/bot_fingerprints.csv
+s3://metaml-telemetry-<account-id>/decisions/orchestrator_decisions.csv
+Athena usage:Athena is used to create an external table over the S3 trade data and run SQL queries such as:
+SELECT symbol, market_regime, AVG(price) AS avg_price, COUNT(*) AS trades
+FROM metaml_telemetry.trades
+GROUP BY symbol, market_regime;
+This provides a cloud-native analytics layer for market telemetry.
+GCP: BigQuery
+Purpose
+BigQuery stores analytics-ready datasets for evaluating bot performance and orchestration behavior.
+Tables
+Dataset:metaml_analytics
+Tables:bot_fingerprints,orchestrator_decisions,trades
+Important implementation note:
+A GCP authentication/quota project mismatch occurred during export. The fix was:
+gcloud config set project cchw2-487819
+gcloud auth application-default login
+gcloud auth application-default set-quota-project cchw2-487819
+gcloud services enable bigquery.googleapis.com --project cchw2-487819
+After this, the export script successfully loaded local CSV logs into BigQuery.
+
+Azure: Cosmos DB
+Cosmos DB stores JSON-based operational metadata.
+Stored data: Containers:
+bot_taxonomy
+bot_fingerprints
+orchestrator_decisions
+
+This phase strengthens the project because it demonstrates not only multi-cloud compute deployment, but also multi-cloud managed data services:
+
+AWS App Runner + S3/Athena
+GCP Cloud Run + BigQuery
+Azure Container Apps + Cosmos DB
+
+This provides a stronger cloud-native architecture for telemetry, analytics, metadata storage, and final reporting.
+
+Phase 11.5 adds managed cloud data services across AWS, GCP, and Azure.
+
+### Final data-service mapping
+
+```text
+AWS:   S3 + Athena for trading telemetry and SQL analytics
+GCP:   BigQuery for bot fingerprints, trades, and orchestration analytics
+Azure: Cosmos DB for bot taxonomy, fingerprints, and orchestration metadata
+
+AWS: Upload telemetry to S3:
+export AWS_REGION=us-east-1
+export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+export S3_BUCKET=metaml-telemetry-$AWS_ACCOUNT_ID
+export ATHENA_RESULTS_BUCKET=metaml-athena-results-$AWS_ACCOUNT_ID
+
+aws s3 mb s3://$S3_BUCKET --region $AWS_REGION
+aws s3 mb s3://$ATHENA_RESULTS_BUCKET --region $AWS_REGION
+
+aws s3 cp data/logs/trades.csv s3://$S3_BUCKET/trades/trades.csv
+aws s3 cp data/logs/bot_fingerprints.csv s3://$S3_BUCKET/fingerprints/bot_fingerprints.csv
+aws s3 cp data/logs/orchestrator_decisions.csv s3://$S3_BUCKET/decisions/orchestrator_decisions.csv
+
+AWS: Athena query example:
+aws athena start-query-execution \
+  --query-string "SELECT symbol, market_regime, AVG(price) AS avg_price, COUNT(*) AS trades FROM metaml_telemetry.trades GROUP BY symbol, market_regime LIMIT 10;" \
+  --result-configuration OutputLocation=s3://$ATHENA_RESULTS_BUCKET/results/ \
+  --region $AWS_REGION
+
+Retrieve results:
+aws athena get-query-results \
+  --query-execution-id <QUERY_EXECUTION_ID> \
+  --region $AWS_REGION
+
+GCP: BigQuery export
+gcloud config set project cchw2-487819
+gcloud auth application-default login
+gcloud auth application-default set-quota-project cchw2-487819
+gcloud services enable bigquery.googleapis.com --project cchw2-487819
+
+Export data:
+GCP_PROJECT_ID=cchw2-487819 PYTHONPATH=. python scripts/cloud_exports/export_to_bigquery.py
+
+Query Example:
+bq query --use_legacy_sql=false \
+"SELECT bot_id, strategy_type, market_regime, AVG(pnl) AS avg_pnl, COUNT(*) AS windows
+ FROM \`cchw2-487819.metaml_analytics.bot_fingerprints\`
+ GROUP BY bot_id, strategy_type, market_regime
+ ORDER BY avg_pnl DESC
+ LIMIT 10"
+
+Azure: Cosmos DB export:
+az provider register --namespace Microsoft.DocumentDB
+az provider show \
+  --namespace Microsoft.DocumentDB \
+  --query registrationState \
+  --output tsv
+Export To Cosmos DB:
+COSMOS_ENDPOINT=<endpoint> \
+COSMOS_KEY=<key> \
+PYTHONPATH=. python scripts/cloud_exports/export_to_cosmos.py
+
+Query Cosmos DB:
+COSMOS_ENDPOINT=<endpoint> \
+COSMOS_KEY=<key> \
+PYTHONPATH=. python scripts/cloud_exports/query_cosmos.py
+
+Run All cloud data exports:
+AWS_REGION=us-east-1 \
+GCP_PROJECT_ID=cchw2-487819 \
+COSMOS_ENDPOINT=<endpoint> \
+COSMOS_KEY=<key> \
+./scripts/export_all_cloud_data.sh
+
+Final Cloud data story:
+AWS:   App Runner + S3/Athena
+GCP:   Cloud Run + BigQuery
+Azure: Container Apps + Cosmos DB
