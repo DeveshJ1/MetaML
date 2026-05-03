@@ -448,3 +448,32 @@ Expecatations:
  orchestrator decisions are generated
  only active bot trades
  docker compose down stops system
+
+# Phase 11: Multi-Cloud Deployment Mapping
+
+## Local Backbone
+The full MetaML trading simulation remains runnable locally through Docker Compose. This includes RabbitMQ, market engine, replay service, bots, fingerprinting, orchestrator, registry, audit, and dashboard.
+
+## AWS Deployment
+Service: Registry API  
+PaaS: AWS App Runner  
+Container Registry: Amazon ECR  
+Purpose: Demonstrates decentralized service discovery node hosted on AWS.
+
+## GCP Deployment
+Service: Inference API  
+PaaS: Google Cloud Run  
+Container Registry: Artifact Registry  
+Purpose: Demonstrates ML inference node hosted on GCP.
+
+## Azure Deployment
+Service: Dashboard  
+PaaS: Azure Container Apps  
+Container Registry: Azure Container Registry  
+Purpose: Demonstrates human-in-the-loop operator interface hosted on Azure.
+
+## Requirement Coverage
+- At least three clouds: AWS, GCP, Azure
+- PaaS services: App Runner, Cloud Run, Azure Container Apps
+- Decentralized/P2P-style functionality: registry + audit chain
+- IAN functionality: orchestrator uses ML recommendation and human-in-loop control

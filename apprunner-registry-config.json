@@ -1,0 +1,13 @@
+{
+  "ImageRepository": {
+    "ImageIdentifier": "848269787945.dkr.ecr.us-east-1.amazonaws.com/metaml-registry-api:latest",
+    "ImageRepositoryType": "ECR",
+    "ImageConfiguration": {
+      "Port": "8600"
+    }
+  },
+  "AutoDeploymentsEnabled": false,
+  "AuthenticationConfiguration": {
+    "AccessRoleArn": "arn:aws:iam::848269787945:role/MetaMLAppRunnerECRAccessRole"
+  }
+}

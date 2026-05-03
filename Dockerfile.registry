@@ -1,0 +1,17 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+COPY requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip && pip install --no-cache-dir -r requirements.txt
+
+COPY . .
+
+ENV PYTHONPATH=/app
+ENV PORT=8600
+
+RUN mkdir -p /app/data/registry /app/data/audit /app/data/logs /app/services/orchestrator/state
+
+EXPOSE 8600
+
+CMD ["sh", "-c", "python scripts/register_services.py && uvicorn services.registry.registry_api:app --host 0.0.0.0 --port ${PORT}"]

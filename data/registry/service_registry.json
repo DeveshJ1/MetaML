@@ -116,5 +116,40 @@
       "health": "http://localhost:8501/health"
     },
     "last_heartbeat": "2026-05-02T22:24:32.629990+00:00"
+  },
+  "aws-registry-api": {
+    "service_id": "aws-registry-api",
+    "service_type": "decentralized_registry_node",
+    "endpoint": "https://w3mstcke3t.us-east-1.awsapprunner.com",
+    "cloud": "aws",
+    "status": "healthy",
+    "metadata": {
+      "paas": "AWS App Runner",
+      "health": "https://w3mstcke3t.us-east-1.awsapprunner.com/health"
+    },
+    "last_heartbeat": "2026-05-03T02:56:52.881993+00:00"
+  },
+  "gcp-inference-api": {
+    "service_id": "gcp-inference-api",
+    "service_type": "ml_inference_node",
+    "endpoint": "https://metaml-inference-api-vhsoiocxlq-uc.a.run.app",
+    "cloud": "gcp",
+    "status": "healthy",
+    "metadata": {
+      "paas": "Cloud Run",
+      "health": "https://metaml-inference-api-vhsoiocxlq-uc.a.run.app/health"
+    },
+    "last_heartbeat": "2026-05-03T02:56:52.882781+00:00"
+  },
+  "azure-dashboard": {
+    "service_id": "azure-dashboard",
+    "service_type": "human_in_loop_node",
+    "endpoint": "https://metaml-dashboard.delightfulmoss-82c77b7a.eastus.azurecontainerapps.io",
+    "cloud": "azure",
+    "status": "healthy",
+    "metadata": {
+      "paas": "Azure Container Apps"
+    },
+    "last_heartbeat": "2026-05-03T02:56:52.883166+00:00"
   }
 }
