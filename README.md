@@ -1,638 +1,674 @@
 # MetaML: Intelligent Multi-Cloud Trading Bot Orchestration Platform
 
-MetaML is a cloud-based Intelligent Autonomous Networked application for orchestrating trading bots in a simulated financial market.
+MetaML is a cloud-based Intelligent Autonomous Networked (IAN) application for orchestrating trading bots in a simulated financial market. The platform combines distributed systems, machine learning, event-driven architecture, and multi-cloud deployment to dynamically select and manage trading strategies.
 
-## Phase 0
+The system simulates market activity, generates trading telemetry, computes bot performance fingerprints, trains an ML recommendation model, and autonomously activates the best-performing strategy through an orchestration layer.
 
-Current functionality:
+---
 
-- Project repository structure
-- Python virtual environment
-- RabbitMQ local message bus
-- Shared event schemas
-- Basic publish/consume smoke test
+# Features
 
-## Local Setup
+- Simulated financial market environment
+- Multiple trading strategies
+  - Baseline random bot
+  - Momentum bot
+  - Mean-reversion bot
+- Event-driven architecture using RabbitMQ
+- Market replay and trade execution engine
+- Bot fingerprint generation and analytics
+- ML-based strategy recommendation system
+- Autonomous orchestrator with human-in-the-loop support
+- Operator dashboard
+- Decentralized-style service registry
+- Tamper-evident audit chain
+- Dockerized full-system deployment
+- Multi-cloud deployment across AWS, GCP, and Azure
+- Cloud-native managed data services integration
+
+---
+
+# System Architecture
+
+## High-Level Flow
+
+```text
+Market Replay
+      ↓
+Trading Bots
+      ↓
+Market Engine
+      ↓
+Trade Logs
+      ↓
+Fingerprint Service
+      ↓
+ML Inference API
+      ↓
+Orchestrator
+      ↓
+Active Bot Control
+      ↓
+Dashboard + Registry + Audit
+```
+
+---
+
+# Node Categories
+
+The project is organized into node categories following IAN principles.
+
+| Node Category | Components |
+|---|---|
+| Market Infrastructure Nodes | Replay service, market engine |
+| Trading Bot Nodes | Baseline, momentum, mean-reversion bots |
+| Intelligence Nodes | Fingerprint service, ML inference API |
+| Orchestration Nodes | Orchestrator service |
+| Monitoring Nodes | Dashboard |
+| Registry & Audit Nodes | Registry API, audit API |
+
+---
+
+# Technology Stack
+
+| Category | Technologies |
+|---|---|
+| Language | Python |
+| Messaging | RabbitMQ |
+| APIs | FastAPI |
+| ML | scikit-learn |
+| Containers | Docker, Docker Compose |
+| AWS | App Runner, S3, Athena, ECR |
+| GCP | Cloud Run, BigQuery, Artifact Registry |
+| Azure | Container Apps, Cosmos DB, ACR |
+
+---
+
+# Repository Structure
+
+```text
+metaml/
+│
+├── services/
+│   ├── replay-service/
+│   ├── market-engine/
+│   ├── bots/
+│   ├── fingerprint/
+│   ├── inference/
+│   ├── orchestrator/
+│   ├── dashboard/
+│   ├── registry/
+│   └── audit/
+│
+├── shared/
+│   ├── libs/
+│   └── schemas/
+│
+├── scripts/
+├── data/
+├── docs/
+├── final_submission/
+└── docker-compose.yml
+```
+
+---
+
+# Quick Start
+
+## Clone Repository
+
+```bash
+git clone <repository-url>
+cd metaml
+```
+
+## Create Virtual Environment
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
+```
+
+## Install Dependencies
+
+```bash
 pip install -r requirements.txt
+```
+
+## Start RabbitMQ
+
+```bash
+docker compose up -d rabbitmq
+```
+
+RabbitMQ UI:
+
+```text
+http://localhost:15672
+```
+
+Credentials:
+
+```text
+metaml / metaml
+```
+
+---
+
+# Full Dockerized Demo
+
+Train model first:
+
+```bash
+PYTHONPATH=. python services/inference/train_model.py
+```
+
+Run full system:
+
+```bash
+docker compose up --build
+```
+
+---
+
+# Local URLs
+
+| Service | URL |
+|---|---|
+| Dashboard | http://localhost:8501 |
+| Inference API | http://localhost:8000/health |
+| Registry API | http://localhost:8600/services |
+| Audit API | http://localhost:8700/audit/verify |
+| RabbitMQ UI | http://localhost:15672 |
+
+---
+
+# Project Phases
+
+## Phase 0 — Local Infrastructure Setup
+
+### Added
+
+- Project structure
+- Python virtual environment
+- RabbitMQ messaging backbone
+- Shared event schemas
+- Publish/consume smoke tests
+
+### Key Commands
+
+```bash
 docker compose up -d
 python scripts/test_consume.py
 python scripts/test_publish.py
-RabbitMQ Dashboard:http://localhost:15672, metaml / metaml
+```
 
-## Phase 1: Local Market Simulation Loop
+---
 
-Phase 1 adds:
+## Phase 1 — Local Market Simulation Loop
 
-- Synthetic regime-based market replay service
+### Added
+
+- Synthetic market replay service
 - Simplified market engine
 - Baseline trading bot
-- Executed trade monitor
+- Trade monitoring
 
-### Run Phase 1
+### Result
 
-Start RabbitMQ:
+The replay service publishes market snapshots, the baseline bot submits orders, and the market engine executes trades.
 
-```bash
-docker compose up -d
+---
 
-Then open four terminals:
-Go to project directory in each:
+## Phase 2 — Hybrid Replay + Logging + PnL
 
-cd metaml
-source .venv/bin/activate
+### Added
 
-Terminal 1:
-PYTHONPATH=. python services/market-engine/market_engine.py
-Terminal 2:
-PYTHONPATH=. python services/replay-service/replay_service.py
-Terminal 3:
-PYTHONPATH=. python services/bots/baseline/baseline_bot.py
-Terminal 4:
-PYTHONPATH=. python scripts/monitor_trades.py
-
-Expected behavior:
-
-Replay service publishes market snapshots.
-Baseline bot receives snapshots.
-Baseline bot submits orders.
-Market engine executes orders.
-Trade monitor displays executed trades.
-
-## Phase 2: Hybrid Market Replay + Logging + PnL
-
-Phase 2 adds:
-
-- Hybrid replay from CSV price data
+- CSV-based market replay
 - Synthetic order book depth
-- Market and limit order execution logic
+- Market and limit orders
 - Trade CSV logging
-- Baseline bot PnL tracking
+- Bot PnL tracking
 
-### Run Phase 2
+### Result
 
-Start RabbitMQ:
+Trades and portfolio metrics are persisted locally for analytics and ML processing.
 
-```bash
-docker compose up -d
-Then open 6 different terminals and run:
-cd metaml
-source .venv/bin/activate
+---
 
-PYTHONPATH=. python services/market-engine/market_engine.py
-PYTHONPATH=. python services/replay-service/replay_service.py
-PYTHONPATH=. python services/bots/baseline/baseline_bot.py
-PYTHONPATH=. python scripts/monitor_trades.py
-PYTHONPATH=. python scripts/log_trades.py
-PYTHONPATH=. python scripts/track_bot_pnl.py
+## Phase 3 — Multiple Trading Strategies
 
-Exepected Results:
- Replay service reads data/raw/sample_prices.csv
- Market snapshots include source=HYBRID_CSV_REPLAY
- Market snapshots include bid/ask depth
- Market engine receives snapshots
- Baseline bot sends market and limit orders
- Some limit orders fill
- Some limit orders do not fill
- Trade monitor displays trades
- Trade logger writes data/logs/trades.csv
- PnL tracker updates cash, position, and equity
+### Added
 
-## Phase 3: Multiple Strategy Bots
+- Baseline bot
+- Momentum bot
+- Mean-reversion bot
+- Shared bot utility libraries
+- Multi-bot PnL tracking
 
-Phase 3 adds:
+### Result
 
-- Baseline random bot
-- Momentum strategy bot
-- Mean reversion strategy bot
-- Shared bot utility functions
-- All-bot PnL tracker
+Multiple strategies operate simultaneously and respond differently to market conditions.
 
-### Run Phase 3
+---
 
-Start RabbitMQ:
+## Phase 4 — Bot Fingerprinting
 
-```bash
-docker compose up -d
-Then open 8 terminals and run each in a separate terminals:
-cd metaml
-source .venv/bin/activate
-
-PYTHONPATH=. python services/market-engine/market_engine.py
-PYTHONPATH=. python services/replay-service/replay_service.py
-PYTHONPATH=. python services/bots/baseline/baseline_bot.py
-PYTHONPATH=. python services/bots/momentum/momentum_bot.py
-PYTHONPATH=. python services/bots/mean-reversion/mean_reversion_bot.py
-PYTHONPATH=. python scripts/monitor_trades.py
-PYTHONPATH=. python scripts/track_all_pnl.py
-PYTHONPATH=. python scripts/log_trades.py
-
-Expectations:
- Baseline bot runs
- Momentum bot runs
- Mean reversion bot runs
- All bots receive market snapshots
- Momentum bot trades on price direction
- Mean reversion bot trades on price deviation
- Market engine executes trades from all bots 
- PnL tracker shows all active bots
- Trade logger can log trades from all bots
-
-## Phase 4: Bot Fingerprints
-
-Phase 4 adds:
+### Added
 
 - Bot taxonomy metadata
 - Fingerprint service
-- Time-windowed bot performance summaries
-- ML-ready dataset at `data/logs/bot_fingerprints.csv`
+- Rolling performance summaries
+- ML-ready fingerprint dataset
 
-### Run Phase 4
+### Generated Dataset
 
-```bash
-cd metaml
-source .venv/bin/activate
+```text
+data/logs/bot_fingerprints.csv
+```
 
-docker compose up -d
-Then run each in a separate terminal:
-PYTHONPATH=. python services/market-engine/market_engine.py
-PYTHONPATH=. python services/replay-service/replay_service.py
-PYTHONPATH=. python services/bots/baseline/baseline_bot.py
-PYTHONPATH=. python services/bots/momentum/momentum_bot.py
-PYTHONPATH=. python services/bots/mean-reversion/mean_reversion_bot.py
-PYTHONPATH=. python scripts/monitor_trades.py
-PYTHONPATH=. python scripts/track_all_pnl.py
-PYTHONPATH=. python scripts/log_trades.py
-PYTHONPATH=. FINGERPRINT_WINDOW_SECONDS=30 python services/fingerprint/fingerprint_service.py
+### Fingerprint Metrics
 
-To view fingerprint summary:
-PYTHONPATH=. python scripts/view_fingerprints.py
-tail -n 10 data/logs/bot_fingerprints.csv
+- PnL
+- Drawdown
+- Trade count
+- Volatility
+- Market regime
+- Position exposure
 
-Expectations:
- bot_taxonomy.json exists
- fingerprint_service.py runs
- fingerprint service receives market snapshots
- fingerprint service receives trades
- service writes data/logs/bot_fingerprints.csv
- each bot has fingerprint rows
- fingerprints include pnl, drawdown, regime, trade count
- view_fingerprints.py summarizes bot performance
-## Phase 5: ML Recommendation Model
+---
 
-Phase 5 adds:
+## Phase 5 — ML Recommendation System
 
-- ML training from bot fingerprints
+### Added
+
+- ML training pipeline
 - Saved model artifact
 - FastAPI inference service
-- Recommendation endpoint
-- Scripts to test recommendations
+- Recommendation scripts
 
-### Train Model
-Must have results from Phase 4:
+### Training
+
 ```bash
 PYTHONPATH=. python services/inference/train_model.py
+```
 
-Start Inference API:
+### Start Inference API
+
+```bash
 PYTHONPATH=. uvicorn services.inference.inference_api:app --host 0.0.0.0 --port 8000
-Health Check : curl http://localhost:8000/health
+```
 
-Test Recommendation:
-PYTHONPATH=. python scripts/test_recommendation.py
+### Test Recommendation
 
-Recommendation from latest fingerprints:
+```bash
 PYTHONPATH=. python scripts/recommend_from_latest_fingerprints.py
+```
 
-Expectations:
- bot_fingerprints.csv has data
- train_model.py runs
- data/models/bot_recommender.pkl is created
- inference_api.py starts with uvicorn
- /health returns model_loaded true
- /recommend returns recommended_bot
- test_recommendation.py works
- recommend_from_latest_fingerprints.py works
+---
 
-## Phase 6: MetaML Orchestrator
+## Phase 6 — MetaML Orchestrator
 
-Phase 6 adds:
+### Added
 
 - Orchestrator service
 - ML recommendation polling
-- Manual human-in-the-loop approval
-- Auto-switch mode
-- Active bot state file
-- Orchestrator decision log
+- Human-in-the-loop approval
+- Automatic orchestration mode
+- Active bot state management
+- Orchestrator decision logs
 
-### Run Orchestrator
-Must have Results from 4/5. 
-Manual mode:
+### Manual Mode
 
 ```bash
-PYTHONPATH=. ORCHESTRATOR_MODE=manual ORCHESTRATOR_POLL_SECONDS=15 python services/orchestrator/orchestrator.py
+PYTHONPATH=. ORCHESTRATOR_MODE=manual python services/orchestrator/orchestrator.py
+```
 
-Auto Mode:
+### Automatic Mode
 
-PYTHONPATH=. ORCHESTRATOR_MODE=auto ORCHESTRATOR_POLL_SECONDS=15 python services/orchestrator/orchestrator.py
+```bash
+PYTHONPATH=. ORCHESTRATOR_MODE=auto python services/orchestrator/orchestrator.py
+```
 
-Run Once (no looping):
-PYTHONPATH=. ORCHESTRATOR_MODE=manual python scripts/test_orchestrator_once.py
+---
 
-View Active Bot:
-PYTHONPATH=. python scripts/view_active_bot.py
+## Phase 7 — Active Bot Control
 
-View Decisions:
-PYTHONPATH=. python scripts/view_orchestrator_decisions.py
+### Added
 
-Expectations:
- orchestrator.py starts
- it reads latest bot fingerprints
- it calls inference API
- it receives recommended_bot
- manual mode asks for approval
- auto mode switches automatically
- active_bot.json is created
- orchestrator_decisions.csv is created
- view_active_bot.py works
- view_orchestrator_decisions.py works
+- Active bot state management
+- Orchestrator-controlled trading
+- Manual active bot switching
 
-## Phase 7: Active Bot Control
-
-Phase 7 adds:
-
-- Shared active bot helper
-- Bots observe market data but only active bot trades
-- Manual active-bot setter
-- Orchestrator-controlled trading behavior
-
-### Set Active Bot Manually
+### Set Active Bot
 
 ```bash
 PYTHONPATH=. python scripts/set_active_bot.py baseline-bot
 PYTHONPATH=. python scripts/set_active_bot.py momentum-bot
 PYTHONPATH=. python scripts/set_active_bot.py mean-reversion-bot
-PYTHONPATH=. python scripts/set_active_bot.py none
+```
 
-Run Core Bot Control Test
-docker compose up -d
-PYTHONPATH=. python scripts/set_active_bot.py baseline-bot
+### Result
 
-Run each in a separate terminal:
-PYTHONPATH=. python services/market-engine/market_engine.py
-PYTHONPATH=. python services/replay-service/replay_service.py
-PYTHONPATH=. python services/bots/baseline/baseline_bot.py
-PYTHONPATH=. python services/bots/momentum/momentum_bot.py
-PYTHONPATH=. python services/bots/mean-reversion/mean_reversion_bot.py
-PYTHONPATH=. python scripts/monitor_trades.py
-
-Only the selected active bot should send orders.
-Run With Orchestrator:
-
-PYTHONPATH=. FINGERPRINT_WINDOW_SECONDS=15 python services/fingerprint/fingerprint_service.py
-PYTHONPATH=. python services/inference/train_model.py
-PYTHONPATH=. uvicorn services.inference.inference_api:app --host 0.0.0.0 --port 8000
-PYTHONPATH=. ORCHESTRATOR_MODE=manual ORCHESTRATOR_POLL_SECONDS=15 python services/orchestrator/orchestrator.py
-
-## Phase 8: Operator Dashboard
-
-Phase 8 adds:
-
-- FastAPI dashboard
-- Active bot display
-- Manual active bot switching
-- Latest fingerprints table
-- Latest orchestrator decisions table
-- Latest trades table
-
-### Run Dashboard
-
-```bash
-PYTHONPATH=. uvicorn services.dashboard.dashboard_app:app --host 0.0.0.0 --port 8501
-
-Open:
-http://localhost:8501
-
-Full Dashboard Demo:
-docker compose up -d
-PYTHONPATH=. python scripts/set_active_bot.py baseline-bot
-Run in separate terminals:
-PYTHONPATH=. python services/market-engine/market_engine.py
-PYTHONPATH=. python services/replay-service/replay_service.py
-PYTHONPATH=. python services/bots/baseline/baseline_bot.py
-PYTHONPATH=. python services/bots/momentum/momentum_bot.py
-PYTHONPATH=. python services/bots/mean-reversion/mean_reversion_bot.py
-PYTHONPATH=. FINGERPRINT_WINDOW_SECONDS=15 python services/fingerprint/fingerprint_service.py
-PYTHONPATH=. python scripts/log_trades.py
-PYTHONPATH=. uvicorn services.dashboard.dashboard_app:app --host 0.0.0.0 --port 8501
-Optional (run inference + orchestrator too)
-PYTHONPATH=. python services/inference/train_model.py
-PYTHONPATH=. uvicorn services.inference.inference_api:app --host 0.0.0.0 --port 8000
-PYTHONPATH=. ORCHESTRATOR_MODE=auto ORCHESTRATOR_POLL_SECONDS=15 python services/orchestrator/orchestrator.py
-
-Expectations:
- dashboard_app.py exists
- dashboard.html exists
- dashboard starts on port 8501
- http://localhost:8501 opens
- active bot is displayed
- manual switch form works
- latest fingerprints appear
- latest trades appear when log_trades.py is running
- orchestrator decisions appear when orchestrator is running
- only selected bot trades after switching from dashboard
-
-## Phase 9: Decentralized Registry + Audit Log
-
-Phase 9 adds:
-
-- Local decentralized-style service registry
-- Service descriptors for all major nodes
-- Registry API
-- Tamper-evident hash-chain audit log
-- Audit API
-- Dashboard sections for registry and audit
-
-### Register Services
-
-```bash
-PYTHONPATH=. python scripts/register_services.py
-View Registry:
-PYTHONPATH=. python scripts/view_registry.py
-
-Test audit chain:
-PYTHONPATH=. python scripts/test_audit_chain.py
-
-View audit chain: 
-PYTHONPATH=. python scripts/view_audit_chain.py
-
-Start Registry API:
-PYTHONPATH=. uvicorn services.registry.registry_api:app --host 0.0.0.0 --port 8600
-http://localhost:8600/services
-
-Start Audit API:
-PYTHONPATH=. uvicorn services.audit.audit_api:app --host 0.0.0.0 --port 8700
-http://localhost:8700/audit/verify
-
-Expectations:
- service_registry.py exists
- audit_chain.py exists
- register_services.py creates service_registry.json
- view_registry.py shows services
- test_audit_chain.py appends/verifies audit events
- audit_chain.csv is created
- orchestrator writes audit events
- registry API runs on port 8600
- audit API runs on port 8700
- dashboard shows registry
- dashboard shows audit chain
- audit verification returns valid=True
-
-## Phase 10: Dockerized Full-System Demo
-
-Phase 10 adds:
-
-- Dockerfile
-- Full docker-compose setup
-- One-command local demo
-- Containerized services for:
-  - RabbitMQ
-  - market engine
-  - replay service
-  - strategy bots
-  - fingerprint service
-  - inference API
-  - orchestrator
-  - dashboard
-  - registry API
-  - audit API
-
-### Prepare Demo
-
-Make sure model exists:
-
-```bash
-PYTHONPATH=. python services/inference/train_model.py
-
-Set initial active bot:
-PYTHONPATH=. python scripts/set_active_bot.py baseline-bot
-
-Run Docker Demo:
-docker compose up --build
-
-Demo URLS:
-Dashboard:     http://localhost:8501
-Inference API: http://localhost:8000/health
-Registry API:  http://localhost:8600/services
-Audit API:     http://localhost:8700/audit/verify
-RabbitMQ UI:   http://localhost:15672
-
-Rabbit MQ credentials:
-metaml / metaml
-
-Stop Demo:
-docker compose down
-
-Expecatations:
-[ ] Dockerfile exists
-[ ] docker-compose.yml includes full system
- docker compose up --build starts successfully
- dashboard opens at localhost:8501
- inference API health works
- registry API works
- audit API verify works
- trades are generated
- fingerprints are generated
- orchestrator decisions are generated
- only active bot trades
- docker compose down stops system
-
-# Phase 11: Multi-Cloud Deployment Mapping
-
-## Local Backbone
-The full MetaML trading simulation remains runnable locally through Docker Compose. This includes RabbitMQ, market engine, replay service, bots, fingerprinting, orchestrator, registry, audit, and dashboard.
-
-## AWS Deployment
-Service: Registry API  
-PaaS: AWS App Runner  
-Container Registry: Amazon ECR  
-Purpose: Demonstrates decentralized service discovery node hosted on AWS.
-
-## GCP Deployment
-Service: Inference API  
-PaaS: Google Cloud Run  
-Container Registry: Artifact Registry  
-Purpose: Demonstrates ML inference node hosted on GCP.
-
-## Azure Deployment
-Service: Dashboard  
-PaaS: Azure Container Apps  
-Container Registry: Azure Container Registry  
-Purpose: Demonstrates human-in-the-loop operator interface hosted on Azure.
-
-## Requirement Coverage
-- At least three clouds: AWS, GCP, Azure
-- PaaS services: App Runner, Cloud Run, Azure Container Apps
-- Decentralized/P2P-style functionality: registry + audit chain
-- IAN functionality: orchestrator uses ML recommendation and human-in-loop control
-
-Expecattions:
- AWS registry API deployed
- AWS /health endpoint works
- GCP inference API deployed
- GCP /health endpoint works
- Azure dashboard deployed
- Azure dashboard URL opens
- register_cloud_services.py records cloud endpoints
- Registry shows AWS/GCP/Azure services
- docs/phase11_multicloud_deployment.md exists
-
-# Phase 11.5: Cloud Data Services Integration
-
-## Purpose
-
-This phase increases the sophistication of the MetaML implementation by integrating cloud-native managed data services across AWS, GCP, and Azure.
-
-The original plan considered AWS Timestream for time-series telemetry. However, the AWS account did not have access to Timestream for LiveAnalytics, so the AWS data layer was adapted to use Amazon S3 and Amazon Athena instead.
-
-## Final Cloud Data Architecture
-
-| Cloud | Service Used | Purpose |
-|---|---|---|
-| AWS | Amazon S3 + Amazon Athena | Store and query trading telemetry and logs |
-| GCP | BigQuery | Store analytics-ready bot fingerprints, trades, and decisions |
-| Azure | Cosmos DB | Store bot taxonomy, fingerprints, and orchestration records |
+Only the active strategy is allowed to trade.
 
 ---
 
-## AWS: S3 + Athena
+## Phase 8 — Operator Dashboard
+
+### Added
+
+- FastAPI dashboard
+- Active bot monitoring
+- Manual bot switching
+- Trade and fingerprint visualization
+- Orchestrator decision visualization
+
+### Start Dashboard
+
+```bash
+PYTHONPATH=. uvicorn services.dashboard.dashboard_app:app --host 0.0.0.0 --port 8501
+```
+
+Open:
+
+```text
+http://localhost:8501
+```
+
+---
+
+## Phase 9 — Registry + Audit Layer
+
+### Added
+
+- Decentralized-style service registry
+- Registry API
+- Tamper-evident audit chain
+- Audit verification API
+
+### Registry API
+
+```bash
+PYTHONPATH=. uvicorn services.registry.registry_api:app --host 0.0.0.0 --port 8600
+```
+
+### Audit API
+
+```bash
+PYTHONPATH=. uvicorn services.audit.audit_api:app --host 0.0.0.0 --port 8700
+```
+
+### Result
+
+The system supports service discovery and audit verification.
+
+---
+
+## Phase 10 — Dockerized Full-System Deployment
+
+### Added
+
+- Dockerfiles
+- Full Docker Compose stack
+- One-command local deployment
+
+### Containerized Services
+
+- RabbitMQ
+- Replay service
+- Market engine
+- Trading bots
+- Fingerprint service
+- Inference API
+- Orchestrator
+- Dashboard
+- Registry API
+- Audit API
+
+### Run Full System
+
+```bash
+docker compose up --build
+```
+
+---
+
+## Phase 11 — Multi-Cloud Deployment
+
+The project deploys services across AWS, GCP, and Azure.
+
+| Cloud | Service | Purpose |
+|---|---|---|
+| AWS | App Runner | Registry API |
+| GCP | Cloud Run | ML Inference API |
+| Azure | Container Apps | Dashboard |
+
+---
+
+## AWS Deployment
+
+### Services Used
+
+- App Runner
+- Amazon ECR
 
 ### Purpose
 
-AWS stores raw telemetry files in S3 and queries them using Athena.
+Hosts the decentralized-style registry API.
 
-### Data uploaded
+---
 
-- `data/logs/trades.csv`
-- `data/logs/bot_fingerprints.csv`
-- `data/logs/orchestrator_decisions.csv`
+## GCP Deployment
 
-### S3 layout
+### Services Used
 
-```text
-s3://metaml-telemetry-<account-id>/trades/trades.csv
-s3://metaml-telemetry-<account-id>/fingerprints/bot_fingerprints.csv
-s3://metaml-telemetry-<account-id>/decisions/orchestrator_decisions.csv
-Athena usage:Athena is used to create an external table over the S3 trade data and run SQL queries such as:
-SELECT symbol, market_regime, AVG(price) AS avg_price, COUNT(*) AS trades
+- Cloud Run
+- Artifact Registry
+
+### Purpose
+
+Hosts the ML inference API.
+
+---
+
+## Azure Deployment
+
+### Services Used
+
+- Azure Container Apps
+- Azure Container Registry
+
+### Purpose
+
+Hosts the operator dashboard.
+
+---
+
+## Phase 11.5 — Cloud Data Services Integration
+
+This phase extends the system with cloud-native managed data services.
+
+---
+
+## Final Cloud Data Architecture
+
+| Cloud | Services | Purpose |
+|---|---|---|
+| AWS | S3 + Athena | Trade telemetry and SQL analytics |
+| GCP | BigQuery | Bot analytics and orchestration analysis |
+| Azure | Cosmos DB | Metadata and orchestration records |
+
+---
+
+## AWS — S3 + Athena
+
+### Purpose
+
+Stores raw telemetry files and enables SQL-based analytics.
+
+### Uploaded Data
+
+- `trades.csv`
+- `bot_fingerprints.csv`
+- `orchestrator_decisions.csv`
+
+### Athena Query Example
+
+```sql
+SELECT symbol, market_regime,
+       AVG(price) AS avg_price,
+       COUNT(*) AS trades
 FROM metaml_telemetry.trades
 GROUP BY symbol, market_regime;
-This provides a cloud-native analytics layer for market telemetry.
-GCP: BigQuery
-Purpose
-BigQuery stores analytics-ready datasets for evaluating bot performance and orchestration behavior.
-Tables
-Dataset:metaml_analytics
-Tables:bot_fingerprints,orchestrator_decisions,trades
-Important implementation note:
-A GCP authentication/quota project mismatch occurred during export. The fix was:
-gcloud config set project cchw2-487819
-gcloud auth application-default login
-gcloud auth application-default set-quota-project cchw2-487819
-gcloud services enable bigquery.googleapis.com --project cchw2-487819
-After this, the export script successfully loaded local CSV logs into BigQuery.
+```
 
-Azure: Cosmos DB
-Cosmos DB stores JSON-based operational metadata.
-Stored data: Containers:
-bot_taxonomy
-bot_fingerprints
-orchestrator_decisions
+### Important Note
 
-This phase strengthens the project because it demonstrates not only multi-cloud compute deployment, but also multi-cloud managed data services:
+AWS Timestream was originally planned but the AWS account did not have LiveAnalytics access, so the telemetry layer was adapted to use S3 + Athena.
 
-AWS App Runner + S3/Athena
-GCP Cloud Run + BigQuery
-Azure Container Apps + Cosmos DB
+---
 
-This provides a stronger cloud-native architecture for telemetry, analytics, metadata storage, and final reporting.
+## GCP — BigQuery
 
-Phase 11.5 adds managed cloud data services across AWS, GCP, and Azure.
+### Purpose
 
-### Final data-service mapping
+Stores analytics-ready datasets for evaluating bot performance.
 
-```text
-AWS:   S3 + Athena for trading telemetry and SQL analytics
-GCP:   BigQuery for bot fingerprints, trades, and orchestration analytics
-Azure: Cosmos DB for bot taxonomy, fingerprints, and orchestration metadata
+### Tables
 
-AWS: Upload telemetry to S3:
-export AWS_REGION=us-east-1
-export AWS_ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
-export S3_BUCKET=metaml-telemetry-$AWS_ACCOUNT_ID
-export ATHENA_RESULTS_BUCKET=metaml-athena-results-$AWS_ACCOUNT_ID
+- bot_fingerprints
+- orchestrator_decisions
+- trades
 
-aws s3 mb s3://$S3_BUCKET --region $AWS_REGION
-aws s3 mb s3://$ATHENA_RESULTS_BUCKET --region $AWS_REGION
+### Export Script
 
-aws s3 cp data/logs/trades.csv s3://$S3_BUCKET/trades/trades.csv
-aws s3 cp data/logs/bot_fingerprints.csv s3://$S3_BUCKET/fingerprints/bot_fingerprints.csv
-aws s3 cp data/logs/orchestrator_decisions.csv s3://$S3_BUCKET/decisions/orchestrator_decisions.csv
+```bash
+GCP_PROJECT_ID=<project-id> PYTHONPATH=. python scripts/cloud_exports/export_to_bigquery.py
+```
 
-AWS: Athena query example:
-aws athena start-query-execution \
-  --query-string "SELECT symbol, market_regime, AVG(price) AS avg_price, COUNT(*) AS trades FROM metaml_telemetry.trades GROUP BY symbol, market_regime LIMIT 10;" \
-  --result-configuration OutputLocation=s3://$ATHENA_RESULTS_BUCKET/results/ \
-  --region $AWS_REGION
+---
 
-Retrieve results:
-aws athena get-query-results \
-  --query-execution-id <QUERY_EXECUTION_ID> \
-  --region $AWS_REGION
+## Azure — Cosmos DB
 
-GCP: BigQuery export
-gcloud config set project cchw2-487819
-gcloud auth application-default login
-gcloud auth application-default set-quota-project cchw2-487819
-gcloud services enable bigquery.googleapis.com --project cchw2-487819
+### Purpose
 
-Export data:
-GCP_PROJECT_ID=cchw2-487819 PYTHONPATH=. python scripts/cloud_exports/export_to_bigquery.py
+Stores JSON-based metadata and orchestration records.
 
-Query Example:
-bq query --use_legacy_sql=false \
-"SELECT bot_id, strategy_type, market_regime, AVG(pnl) AS avg_pnl, COUNT(*) AS windows
- FROM \`cchw2-487819.metaml_analytics.bot_fingerprints\`
- GROUP BY bot_id, strategy_type, market_regime
- ORDER BY avg_pnl DESC
- LIMIT 10"
+### Containers
 
-Azure: Cosmos DB export:
-az provider register --namespace Microsoft.DocumentDB
-az provider show \
-  --namespace Microsoft.DocumentDB \
-  --query registrationState \
-  --output tsv
-Export To Cosmos DB:
+- bot_taxonomy
+- bot_fingerprints
+- orchestrator_decisions
+
+### Export Script
+
+```bash
 COSMOS_ENDPOINT=<endpoint> \
 COSMOS_KEY=<key> \
 PYTHONPATH=. python scripts/cloud_exports/export_to_cosmos.py
+```
 
-Query Cosmos DB:
-COSMOS_ENDPOINT=<endpoint> \
-COSMOS_KEY=<key> \
-PYTHONPATH=. python scripts/cloud_exports/query_cosmos.py
+---
 
-Run All cloud data exports:
-AWS_REGION=us-east-1 \
-GCP_PROJECT_ID=cchw2-487819 \
-COSMOS_ENDPOINT=<endpoint> \
-COSMOS_KEY=<key> \
-./scripts/export_all_cloud_data.sh
+# Demo Workflow
 
-Final Cloud data story:
-AWS:   App Runner + S3/Athena
-GCP:   Cloud Run + BigQuery
-Azure: Container Apps + Cosmos DB
+The final demo follows this flow:
+
+1. Start the simulated market
+2. Run all bots to generate fingerprints
+3. Train ML recommendation model
+4. Start inference API
+5. Start orchestrator
+6. Activate best-performing strategy
+7. Monitor system through dashboard
+8. Verify cloud deployments
+9. Query cloud data services
+
+---
+
+# Intelligent Autonomous Loop
+
+```text
+Observe → Analyze → Predict → Decide → Act
+```
+
+| Stage | Description |
+|---|---|
+| Observe | Collect market snapshots and trades |
+| Analyze | Generate bot fingerprints |
+| Predict | ML model recommends strategy |
+| Decide | Orchestrator evaluates recommendation |
+| Act | Active bot is updated |
+
+---
+
+# Registry and Audit Design
+
+## Registry
+
+The registry stores service descriptors and enables decentralized-style service discovery.
+
+## Audit Chain
+
+The audit chain uses hash-linked records to create tamper-evident orchestration logs.
+
+---
+
+# Final Cloud Architecture
+
+```text
+AWS:
+  App Runner + S3/Athena
+
+GCP:
+  Cloud Run + BigQuery
+
+Azure:
+  Container Apps + Cosmos DB
+```
+
+---
+
+# Cleanup
+
+## Stop Local System
+
+```bash
+docker compose down
+```
+
+## Cloud Cleanup
+
+See:
+
+```text
+final_submission/demo/cloud_cleanup_guide.md
+```
+
+---
+
+# Future Work
+
+- Real-time cloud streaming pipelines
+- Stronger ML models
+- Full P2P networking
+- Kubernetes deployment
+- Authentication and security hardening
+- More advanced trading strategies
+
+---
+
+# Conclusion
+
+MetaML demonstrates:
+
+- Intelligent Autonomous Networked architecture
+- Distributed event-driven design
+- Machine-learning-driven orchestration
+- Human-in-the-loop control
+- Multi-cloud deployment
+- Cloud-native data integration
+- Registry and audit functionality
+
+The project satisfies the core course requirements for a cloud-based IAN application deployed across multiple cloud providers.
+
