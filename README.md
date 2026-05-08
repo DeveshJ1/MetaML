@@ -17,7 +17,7 @@ The system simulates market activity, generates trading telemetry, computes bot 
 - Market replay and trade execution engine
 - Bot fingerprint generation and analytics
 - ML-based strategy recommendation system
-- Autonomous orchestrator with human-in-the-loop support
+-  Autonomous orchestrator with human-in-the-loop support
 - Operator dashboard
 - Decentralized-style service registry
 - Tamper-evident audit chain
@@ -87,27 +87,27 @@ The project is organized into node categories following IAN principles.
 
 ```text
 metaml/
-│
-├── services/
-│   ├── replay-service/
-│   ├── market-engine/
-│   ├── bots/
-│   ├── fingerprint/
-│   ├── inference/
-│   ├── orchestrator/
-│   ├── dashboard/
-│   ├── registry/
-│   └── audit/
-│
-├── shared/
-│   ├── libs/
-│   └── schemas/
-│
-├── scripts/
-├── data/
-├── docs/
-├── final_submission/
-└── docker-compose.yml
+|
+|-- services/
+|   |-- replay-service/
+|   |-- market-engine/
+|   |-- bots/
+|   |-- fingerprint/
+|   |-- inference/
+|   |-- orchestrator/
+|   |-- dashboard/
+|   |-- registry/
+|   |-- audit/
+|
+|-- shared/
+|   |-- libs/
+|   |-- schemas/
+|
+|-- scripts/
+|-- data/
+|-- docs/
+|-- final_submission/
+|-- docker-compose.yml
 ```
 
 ---
@@ -184,7 +184,7 @@ docker compose up --build
 
 # Project Phases
 
-## Phase 0 — Local Infrastructure Setup
+## Phase 0 - Local Infrastructure Setup
 
 ### Added
 
@@ -204,7 +204,7 @@ python scripts/test_publish.py
 
 ---
 
-## Phase 1 — Local Market Simulation Loop
+## Phase 1 - Local Market Simulation Loop
 
 ### Added
 
@@ -219,7 +219,7 @@ The replay service publishes market snapshots, the baseline bot submits orders, 
 
 ---
 
-## Phase 2 — Hybrid Replay + Logging + PnL
+## Phase 2 - Hybrid Replay + Logging + PnL
 
 ### Added
 
@@ -235,7 +235,7 @@ Trades and portfolio metrics are persisted locally for analytics and ML processi
 
 ---
 
-## Phase 3 — Multiple Trading Strategies
+## Phase 3 - Multiple Trading Strategies
 
 ### Added
 
@@ -251,7 +251,7 @@ Multiple strategies operate simultaneously and respond differently to market con
 
 ---
 
-## Phase 4 — Bot Fingerprinting
+## Phase 4 - Bot Fingerprinting
 
 ### Added
 
@@ -277,7 +277,7 @@ data/logs/bot_fingerprints.csv
 
 ---
 
-## Phase 5 — ML Recommendation System
+## Phase 5 - ML Recommendation System
 
 ### Added
 
@@ -306,7 +306,7 @@ PYTHONPATH=. python scripts/recommend_from_latest_fingerprints.py
 
 ---
 
-## Phase 6 — MetaML Orchestrator
+## Phase 6 - MetaML Orchestrator
 
 ### Added
 
@@ -331,7 +331,7 @@ PYTHONPATH=. ORCHESTRATOR_MODE=auto python services/orchestrator/orchestrator.py
 
 ---
 
-## Phase 7 — Active Bot Control
+## Phase 7 - Active Bot Control
 
 ### Added
 
@@ -353,7 +353,7 @@ Only the active strategy is allowed to trade.
 
 ---
 
-## Phase 8 — Operator Dashboard
+## Phase 8 - Operator Dashboard
 
 ### Added
 
@@ -377,7 +377,7 @@ http://localhost:8501
 
 ---
 
-## Phase 9 — Registry + Audit Layer
+## Phase 9 - Registry + Audit Layer
 
 ### Added
 
@@ -404,7 +404,7 @@ The system supports service discovery and audit verification.
 
 ---
 
-## Phase 10 — Dockerized Full-System Deployment
+## Phase 10 - Dockerized Full-System Deployment
 
 ### Added
 
@@ -433,7 +433,7 @@ docker compose up --build
 
 ---
 
-## Phase 11 — Multi-Cloud Deployment
+## Phase 11 - Multi-Cloud Deployment
 
 The project deploys services across AWS, GCP, and Azure.
 
@@ -484,7 +484,7 @@ Hosts the operator dashboard.
 
 ---
 
-## Phase 11.5 — Cloud Data Services Integration
+## Phase 11.5 - Cloud Data Services Integration
 
 This phase extends the system with cloud-native managed data services.
 
@@ -500,7 +500,7 @@ This phase extends the system with cloud-native managed data services.
 
 ---
 
-## AWS — S3 + Athena
+## AWS - S3 + Athena
 
 ### Purpose
 
@@ -528,7 +528,7 @@ AWS Timestream was originally planned but the AWS account did not have LiveAnaly
 
 ---
 
-## GCP — BigQuery
+## GCP - BigQuery
 
 ### Purpose
 
@@ -548,7 +548,7 @@ GCP_PROJECT_ID=<project-id> PYTHONPATH=. python scripts/cloud_exports/export_to_
 
 ---
 
-## Azure — Cosmos DB
+## Azure - Cosmos DB
 
 ### Purpose
 
